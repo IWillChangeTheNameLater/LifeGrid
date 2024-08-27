@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# noinspection PyUnresolvedReferences
 from src.config import settings
 from sqlmodel import SQLModel
+from src.users.models import Users
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
