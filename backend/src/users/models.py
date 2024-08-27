@@ -7,4 +7,3 @@ class Users(SQLModel, table=True):
     nickname: str
     email: EmailStr
     hashed_password: str
-    refresh_token: str|None
