@@ -6,8 +6,9 @@ from sqlmodel import select, SQLModel
 from database import init_session
 
 
-T = TypeVar('T', bound=SQLModel)
 PrimaryKey = Any|Tuple[Any]
+
+T = TypeVar('T', bound=SQLModel)
 
 
 class BaseDAO(Generic[T], ABC):
@@ -15,7 +16,7 @@ class BaseDAO(Generic[T], ABC):
 
     @classmethod
     async def fetch_all(cls) -> Sequence[T]:
-        async with (init_session() as session):
+        async with init_session() as session:
             statement = select(cls.model)
             results = await session.exec(statement)
             return results.all()

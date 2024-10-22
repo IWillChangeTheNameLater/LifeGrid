@@ -1,6 +1,6 @@
-from backend.src.base_dao import BaseDAO
-from backend.src.users.models import Users
+from base_dao import BaseDAO
+from users.models import Users
 
 
-class UsersDAO(BaseDAO):
+class UsersDAO(BaseDAO[Users]):
     model = Users
