@@ -8,7 +8,7 @@ class BaseUser(SQLModel):
 
 class Users(BaseUser, table=True):
     id: int|None = Field(default=None, primary_key=True)
-    email: EmailStr
+    email: EmailStr = Field(index=True)
     hashed_password: str
 
 
