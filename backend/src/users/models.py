@@ -10,3 +10,8 @@ class Users(BaseUser, table=True):
     id: int|None = Field(default=None, primary_key=True)
     email: EmailStr
     hashed_password: str
+
+
+class UserRegister(BaseUser):
+    email: EmailStr
+    password: str
