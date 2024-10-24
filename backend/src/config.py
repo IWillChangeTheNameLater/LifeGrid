@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     refresh_jwt_key: str = 'Secret key for the refresh token'
     access_jwt_key: str = 'Secret key for the access token'
     jwt_algorithm: str = 'HS256'
-    access_token_exp_sec: int = 60*15
-    refresh_token_exp_sec: int = 60*60*24*30
+    access_jwt_exp_sec: int = 60*60
+    refresh_jwt_exp_sec: int = 60*60*24*30
 
 
 settings = Settings()
