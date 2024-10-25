@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 
-from auth.security import hash_password
+from auth import security
 from users.dao import UsersDAO
-from users.models import UserRegister, Users
+from users.models import UserLogin, UserRegister, Users
 
 
 router = APIRouter(prefix='/auth')
@@ -12,7 +12,25 @@ router = APIRouter(prefix='/auth')
 async def register(user_register: UserRegister) -> None:
     user = await UsersDAO.fetch_by_email(user_register.email)
     if user: raise HTTPException(500)
-    hashed_password = hash_password(user_register.password)
+    hashed_password = security.hash_password(user_register.password)
     await UsersDAO.add(
         Users(email=user_register.email, hashed_password=hashed_password)
     )
+
+
+@router.post('/login')
+async def login(response: Response, user_login: UserLogin) -> None:
+    user = await security.authenticate_user(
+        user_login.email, user_login.password
+    )
+    if user is None:
+        raise HTTPException(401)
+
+    access_jwt = security.create_access_jwt({
+        'sub': user.id,
+        'email': user.email
+    })
+    refresh_jwt = security.create_refresh_jwt({'sub': user.id})
+
+    response.set_cookie('access_jwt', access_jwt)
+    response.set_cookie('refresh_jwt', refresh_jwt, httponly=True)
