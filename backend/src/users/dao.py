@@ -12,6 +12,6 @@ class UsersDAO(BaseDAO[Users]):
     @classmethod
     async def fetch_by_email(cls, email: EmailStr) -> Users|None:
         async with init_session() as session:
-            statement = select(Users).where(Users.email == email)
+            statement = select(cls.model).where(cls.model.email == email)
             results = await session.exec(statement)
             return results.first()
