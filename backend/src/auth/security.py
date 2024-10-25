@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta, UTC
 
 import bcrypt, jwt
+from pydantic import EmailStr
 
 from config import Settings
+from users.dao import UsersDAO
+from users.models import Users
 
 
 def hash_password(password: str) -> str:
@@ -43,3 +46,10 @@ def extract_access_jwt_payload(token: str) -> dict:
 
 def extract_refresh_jwt_payload(token: str) -> dict:
     return extract_jwt_payload(token, Settings.refresh_jwt_key)
+
+
+async def authenticate_user(email: EmailStr, password: str) -> Users|None:
+    user = await UsersDAO.fetch_by_email(email)
+    if user and verify_password(password, user.hashed_password):
+        return user
+    return None
