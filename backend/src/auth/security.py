@@ -20,13 +20,13 @@ def create_jwt(payload: dict, seconds_to_expire: int, key: str) -> str:
     return encoded_jwt
 
 
-def create_access_token(payload: dict) -> str:
+def create_access_jwt(payload: dict) -> str:
     return create_jwt(
         payload, Settings.access_jwt_exp_sec, Settings.access_jwt_key
     )
 
 
-def create_refresh_token(payload: dict) -> str:
+def create_refresh_jwt(payload: dict) -> str:
     return create_jwt(
         payload, Settings.refresh_jwt_exp_sec, Settings.refresh_jwt_key
     )

@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     def db_dsn(self) -> str:
         return f'postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}'
 
-    refresh_jwt_key: str = 'Secret key for the refresh token'
-    access_jwt_key: str = 'Secret key for the access token'
+    refresh_jwt_key: str = 'Secret key for the refresh jwt'
+    access_jwt_key: str = 'Secret key for the access jwt'
     jwt_algorithm: str = 'HS256'
     access_jwt_exp_sec: int = 60*60
     refresh_jwt_exp_sec: int = 60*60*24*30
