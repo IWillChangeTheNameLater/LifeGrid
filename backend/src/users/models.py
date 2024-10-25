@@ -15,3 +15,8 @@ class Users(BaseUser, table=True):
 class UserRegister(BaseUser):
     email: EmailStr
     password: str
+
+
+class UserLogin(BaseUser):
+    email: EmailStr
+    password: str
