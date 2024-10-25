@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
+class _Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env')
 
     db_host: str = 'localhost'
@@ -21,4 +21,4 @@ class Settings(BaseSettings):
     refresh_jwt_exp_sec: int = 60*60*24*30
 
 
-settings = Settings()
+settings = _Settings()
