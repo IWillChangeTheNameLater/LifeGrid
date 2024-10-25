@@ -30,3 +30,16 @@ def create_refresh_token(payload: dict) -> str:
     return create_jwt(
         payload, Settings.refresh_jwt_exp_sec, Settings.refresh_jwt_key
     )
+
+
+def extract_jwt_payload(token: str, key: str) -> dict:
+    payload: dict = jwt.decode(token, key, algorithms=[Settings.jwt_algorithm])
+    return payload
+
+
+def extract_access_jwt_payload(token: str) -> dict:
+    return extract_jwt_payload(token, Settings.access_jwt_key)
+
+
+def extract_refresh_jwt_payload(token: str) -> dict:
+    return extract_jwt_payload(token, Settings.refresh_jwt_key)
