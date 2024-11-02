@@ -12,12 +12,6 @@ class Users(BaseUser, table=True):
     hashed_password: str
 
 
-class UserRead(BaseUser):
-    id: int
-    email: EmailStr
-    hashed_password: str
-
-
 class UserRegister(BaseUser):
     email: EmailStr
     password: str
