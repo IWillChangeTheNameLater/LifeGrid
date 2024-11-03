@@ -25,7 +25,7 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
     user = await security.authenticate_user(
         user_login.email, user_login.password
     )
-    if user is None:
+    if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
     access_jwt = security.create_access_jwt(
