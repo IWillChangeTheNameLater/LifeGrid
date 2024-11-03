@@ -14,34 +14,31 @@ def _get_refresh_jwt(request: Request) -> str|None:
     return request.cookies.get('refresh_jwt')
 
 
-def _extract_payload_from_jwt(token: str, key: str) -> dict:
-    payload: dict = jwt.decode(token, key, algorithms=[settings.jwt_algorithm])
-    return payload
+def _extract_correct_payload_from_jwt(token: str|None, key: str) -> dict:
+    if not token:
+        raise TokenAbsentException
+    try:
+        payload: dict = jwt.decode(
+            token, key, algorithms=[settings.jwt_algorithm]
+        )
+        return payload
+    except jwt.PyJWTError:
+        raise TokenExpiredException
+    except TypeError:
+        raise IncorrectTokenFormatException
 
 
 def get_access_jwt_payload(
-    token: str = Depends(_get_access_jwt)
+    token: str|None = Depends(_get_access_jwt)
 ) -> AccessTokenPayload:
-    if not token:
-        raise TokenAbsentException
-    try:
-        payload = _extract_payload_from_jwt(token, settings.access_jwt_key)
-        return AccessTokenPayload(**payload)
-    except jwt.PyJWTError:
-        raise TokenExpiredException
-    except TypeError:
-        raise IncorrectTokenFormatException
+    payload = _extract_correct_payload_from_jwt(token, settings.access_jwt_key)
+    return AccessTokenPayload(**payload)
 
 
 def get_refresh_jwt_payload(
-    token: str = Depends(_get_refresh_jwt)
+    token: str|None = Depends(_get_refresh_jwt)
 ) -> RefreshTokenPayload:
-    if not token:
-        raise TokenAbsentException
-    try:
-        payload = _extract_payload_from_jwt(token, settings.refresh_jwt_key)
-        return RefreshTokenPayload(**payload)
-    except jwt.PyJWTError:
-        raise TokenExpiredException
-    except TypeError:
-        raise IncorrectTokenFormatException
+    payload = _extract_correct_payload_from_jwt(
+        token, settings.refresh_jwt_key
+    )
+    return RefreshTokenPayload(**payload)
