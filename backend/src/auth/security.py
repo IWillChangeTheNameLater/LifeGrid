@@ -29,6 +29,11 @@ def _create_jwt(
     return encoded_jwt
 
 
+def _extract_payload_from_jwt(token: str, key: str) -> dict:
+    payload: dict = jwt.decode(token, key, algorithms=[settings.jwt_algorithm])
+    return payload
+
+
 def create_access_jwt(payload: dict|SQLModel) -> str:
     return _create_jwt(
         payload, settings.access_jwt_exp_sec, settings.access_jwt_key
@@ -39,19 +44,6 @@ def create_refresh_jwt(payload: dict|SQLModel) -> str:
     return _create_jwt(
         payload, settings.refresh_jwt_exp_sec, settings.refresh_jwt_key
     )
-
-
-def _extract_jwt_payload(token: str, key: str) -> dict:
-    payload: dict = jwt.decode(token, key, algorithms=[settings.jwt_algorithm])
-    return payload
-
-
-def extract_access_jwt_payload(token: str) -> dict:
-    return _extract_jwt_payload(token, settings.access_jwt_key)
-
-
-def extract_refresh_jwt_payload(token: str) -> dict:
-    return _extract_jwt_payload(token, settings.refresh_jwt_key)
 
 
 async def authenticate_user(email: EmailStr, password: str) -> Users|None:
