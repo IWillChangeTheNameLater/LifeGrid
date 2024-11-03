@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, Request, status
-import jwt
+from jwt import PyJWTError
 
 from auth.models import AccessTokenPayload, RefreshTokenPayload
 from auth.security import _extract_payload_from_jwt
@@ -22,7 +22,7 @@ def get_access_jwt_payload(
     try:
         payload = _extract_payload_from_jwt(token, settings.access_jwt_key)
         return AccessTokenPayload(**payload)
-    except jwt.PyJWTError:
+    except PyJWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     except TypeError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
@@ -36,7 +36,7 @@ def get_refresh_jwt_payload(
     try:
         payload = _extract_payload_from_jwt(token, settings.refresh_jwt_key)
         return RefreshTokenPayload(**payload)
-    except jwt.PyJWTError:
+    except PyJWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     except TypeError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
