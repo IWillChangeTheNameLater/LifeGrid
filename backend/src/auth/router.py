@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from auth import security
-from auth.models import Tokens
+from auth.dependencies import get_refresh_jwt_payload
+from auth.models import RefreshTokenPayload, Tokens
 from auth.utils import create_tokens_from_user, set_tokens_in_cookies
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
@@ -27,6 +28,23 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
     )
     if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    tokens = create_tokens_from_user(user)
+
+    set_tokens_in_cookies(response, tokens)
+
+    return tokens
+
+
+@router.post('/refresh')
+async def refresh(
+    response: Response,
+    refresh_token_payload: RefreshTokenPayload = Depends(
+    get_refresh_jwt_payload
+    )
+) -> Tokens:
+    user = await UsersDAO.fetch_by_primary_key(refresh_token_payload.sub)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     tokens = create_tokens_from_user(user)
 
     set_tokens_in_cookies(response, tokens)
