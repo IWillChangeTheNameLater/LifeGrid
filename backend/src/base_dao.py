@@ -6,8 +6,6 @@ from sqlmodel import select, SQLModel
 from database import init_session
 
 
-PrimaryKey = Any|Tuple[Any]
-
 T = TypeVar('T', bound=SQLModel)
 
 
@@ -22,7 +20,7 @@ class BaseDAO(Generic[T], ABC):
             return results.all()
 
     @classmethod
-    async def fetch_by_primary_key(cls, primary_key: PrimaryKey) -> T|None:
+    async def fetch_by_primary_key(cls, primary_key: Any) -> T|None:
         async with init_session() as session:
             result: T|None = await session.get(cls.model, primary_key)
             return result
@@ -40,7 +38,7 @@ class BaseDAO(Generic[T], ABC):
             await session.commit()
 
     @classmethod
-    async def delete_by_primary_key(cls, primary_key: PrimaryKey) -> None:
+    async def delete_by_primary_key(cls, primary_key: Any) -> None:
         async with init_session() as session:
             result = await session.get(cls.model, primary_key)
             await session.delete(result)
