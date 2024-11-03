@@ -14,6 +14,11 @@ class UserAlreadyExistsException(LifeGridException):
     detail = 'The user already exists'
 
 
+class UserIsNotPresentException(LifeGridException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = 'User is not present'
+
+
 class IncorrectEmailOrPasswordException(LifeGridException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Incorrect email or password'
@@ -32,8 +37,3 @@ class TokenAbsentException(LifeGridException):
 class IncorrectTokenFormatException(LifeGridException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Incorrect token format'
-
-
-class UserIsNotPresentException(LifeGridException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-    detail = 'User is not present'
