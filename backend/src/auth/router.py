@@ -37,3 +37,10 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
     set_tokens_in_cookies(response, tokens)
 
     return tokens
+
+
+@router.post('/logout')
+async def logout(response: Response) -> None:
+    invalid_tokens = Tokens(access_token='', refresh_token='')
+
+    set_tokens_in_cookies(response, invalid_tokens)
