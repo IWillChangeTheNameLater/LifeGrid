@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException, Response, status
 
 from auth import security
+from auth.models import AccessTokenPayload, RefreshTokenPayload, Tokens
+from auth.utils import set_tokens_in_cookies
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
 
@@ -19,18 +21,19 @@ async def register(user_register: UserRegister) -> None:
 
 
 @router.post('/login')
-async def login(response: Response, user_login: UserLogin) -> None:
+async def login(response: Response, user_login: UserLogin) -> Tokens:
     user = await security.authenticate_user(
         user_login.email, user_login.password
     )
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-    access_jwt = security.create_access_jwt({
-        'sub': user.id,
-        'email': user.email
-    })
-    refresh_jwt = security.create_refresh_jwt({'sub': user.id})
+    access_jwt = security.create_access_jwt(
+        AccessTokenPayload(sub=user.id, email=user.email)
+    )
+    refresh_jwt = security.create_refresh_jwt(RefreshTokenPayload(sub=user.id))
+    tokens = Tokens(access_token=access_jwt, refresh_token=refresh_jwt)
 
-    response.set_cookie('access_jwt', access_jwt)
-    response.set_cookie('refresh_jwt', refresh_jwt, httponly=True)
+    set_tokens_in_cookies(response, tokens)
+
+    return tokens
