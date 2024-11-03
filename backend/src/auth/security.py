@@ -29,11 +29,6 @@ def _create_jwt(
     return encoded_jwt
 
 
-def _extract_payload_from_jwt(token: str, key: str) -> dict:
-    payload: dict = jwt.decode(token, key, algorithms=[settings.jwt_algorithm])
-    return payload
-
-
 def create_access_jwt(payload: dict|SQLModel) -> str:
     return _create_jwt(
         payload, settings.access_jwt_exp_sec, settings.access_jwt_key

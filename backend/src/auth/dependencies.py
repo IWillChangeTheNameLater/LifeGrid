@@ -1,8 +1,7 @@
 from fastapi import Depends, Request
-from jwt import PyJWTError
+import jwt
 
 from auth.models import AccessTokenPayload, RefreshTokenPayload
-from auth.security import _extract_payload_from_jwt
 from config import settings
 from exceptions import *
 
@@ -15,6 +14,11 @@ def _get_refresh_jwt(request: Request) -> str|None:
     return request.cookies.get('refresh_jwt')
 
 
+def _extract_payload_from_jwt(token: str, key: str) -> dict:
+    payload: dict = jwt.decode(token, key, algorithms=[settings.jwt_algorithm])
+    return payload
+
+
 def get_access_jwt_payload(
     token: str = Depends(_get_access_jwt)
 ) -> AccessTokenPayload:
@@ -23,7 +27,7 @@ def get_access_jwt_payload(
     try:
         payload = _extract_payload_from_jwt(token, settings.access_jwt_key)
         return AccessTokenPayload(**payload)
-    except PyJWTError:
+    except jwt.PyJWTError:
         raise TokenExpiredException
     except TypeError:
         raise IncorrectTokenFormatException
@@ -37,7 +41,7 @@ def get_refresh_jwt_payload(
     try:
         payload = _extract_payload_from_jwt(token, settings.refresh_jwt_key)
         return RefreshTokenPayload(**payload)
-    except PyJWTError:
+    except jwt.PyJWTError:
         raise TokenExpiredException
     except TypeError:
         raise IncorrectTokenFormatException
