@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from sqlmodel import SQLModel
 
 from config import settings
+from exceptions import *
 from users.dao import UsersDAO
 from users.models import Users
 
@@ -39,6 +40,20 @@ def create_refresh_token(payload: dict|SQLModel) -> str:
     return _create_token(
         payload, settings.refresh_token_exp_sec, settings.refresh_token_key
     )
+
+
+def _extract_correct_payload_from_token(token: str|None, key: str) -> dict:
+    if not token:
+        raise TokenAbsentException
+    try:
+        payload: dict = jwt.decode(
+            token, key, algorithms=[settings.token_crypt_algorithm]
+        )
+        return payload
+    except jwt.PyJWTError:
+        raise TokenExpiredException
+    except TypeError:
+        raise IncorrectTokenFormatException
 
 
 async def authenticate_user(email: EmailStr, password: str) -> Users|None:
