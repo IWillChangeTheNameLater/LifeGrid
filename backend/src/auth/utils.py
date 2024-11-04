@@ -1,8 +1,9 @@
 from fastapi import Response
 
-from auth.models import AccessTokenPayload, RefreshTokenPayload, Tokens
-from auth.security import create_access_jwt, create_refresh_jwt
 from users.models import Users
+
+from .models import AccessTokenPayload, RefreshTokenPayload, Tokens
+from .security import create_access_jwt, create_refresh_jwt
 
 
 def create_tokens_from_user(user: Users) -> Tokens:

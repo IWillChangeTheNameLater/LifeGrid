@@ -1,9 +1,9 @@
+from .models import Users
 from pydantic import EmailStr
 from sqlmodel import select
 
 from base_dao import BaseDAO
 from database import init_session
-from users.models import Users
 
 
 class UsersDAO(BaseDAO[Users]):

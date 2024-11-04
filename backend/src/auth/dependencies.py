@@ -1,9 +1,10 @@
 from fastapi import Depends, Request
 import jwt
 
-from auth.models import AccessTokenPayload, RefreshTokenPayload
 from config import settings
 from exceptions import *
+
+from .models import AccessTokenPayload, RefreshTokenPayload
 
 
 def _get_access_jwt(request: Request) -> str|None:

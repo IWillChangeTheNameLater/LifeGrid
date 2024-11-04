@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, Response
 
-from auth.dependencies import get_refresh_jwt_payload
-from auth.models import RefreshTokenPayload, Tokens
-from auth.security import authenticate_user, hash_password
-from auth.utils import create_tokens_from_user, set_tokens_in_cookies
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
+
+from .dependencies import get_refresh_jwt_payload
+from .models import RefreshTokenPayload, Tokens
+from .security import authenticate_user, hash_password
+from .utils import create_tokens_from_user, set_tokens_in_cookies
 
 
 router = APIRouter(prefix='/auth')
