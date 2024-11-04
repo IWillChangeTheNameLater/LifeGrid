@@ -14,13 +14,21 @@ router = APIRouter(prefix='/auth')
 
 
 @router.post('/register')
-async def register(user_register: UserRegister) -> None:
+async def register(response: Response, user_register: UserRegister) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)
-    if user: raise UserAlreadyExistsException
+    if user:
+        raise UserAlreadyExistsException
+
     hashed_password = hash_password(user_register.password)
-    await UsersDAO.add(
-        Users(email=user_register.email, hashed_password=hashed_password)
-    )
+    user = Users(email=user_register.email, hashed_password=hashed_password)
+    await UsersDAO.add(user)
+
+    new_user = await UsersDAO.fetch_by_email(user_register.email)
+    assert new_user
+    tokens = create_tokens_from_user(new_user)
+    set_tokens_in_cookies(response, tokens)
+
+    return tokens
 
 
 @router.post('/login')
@@ -28,8 +36,8 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
     user = await authenticate_user(user_login.email, user_login.password)
     if not user:
         raise IncorrectEmailOrPasswordException
-    tokens = create_tokens_from_user(user)
 
+    tokens = create_tokens_from_user(user)
     set_tokens_in_cookies(response, tokens)
 
     return tokens
