@@ -7,20 +7,20 @@ from exceptions import *
 from .models import AccessTokenPayload, RefreshTokenPayload
 
 
-def _get_access_jwt(request: Request) -> str|None:
-    return request.cookies.get('access_jwt')
+def _get_access_token(request: Request) -> str|None:
+    return request.cookies.get('access_token')
 
 
-def _get_refresh_jwt(request: Request) -> str|None:
-    return request.cookies.get('refresh_jwt')
+def _get_refresh_token(request: Request) -> str|None:
+    return request.cookies.get('refresh_token')
 
 
-def _extract_correct_payload_from_jwt(token: str|None, key: str) -> dict:
+def _extract_correct_payload_from_token(token: str|None, key: str) -> dict:
     if not token:
         raise TokenAbsentException
     try:
         payload: dict = jwt.decode(
-            token, key, algorithms=[settings.jwt_algorithm]
+            token, key, algorithms=[settings.token_crypt_algorithm]
         )
         return payload
     except jwt.PyJWTError:
@@ -29,17 +29,19 @@ def _extract_correct_payload_from_jwt(token: str|None, key: str) -> dict:
         raise IncorrectTokenFormatException
 
 
-def get_access_jwt_payload(
-    token: str|None = Depends(_get_access_jwt)
+def get_access_token_payload(
+    token: str|None = Depends(_get_access_token)
 ) -> AccessTokenPayload:
-    payload = _extract_correct_payload_from_jwt(token, settings.access_jwt_key)
+    payload = _extract_correct_payload_from_token(
+        token, settings.access_token_key
+    )
     return AccessTokenPayload(**payload)
 
 
-def get_refresh_jwt_payload(
-    token: str|None = Depends(_get_refresh_jwt)
+def get_refresh_token_payload(
+    token: str|None = Depends(_get_refresh_token)
 ) -> RefreshTokenPayload:
-    payload = _extract_correct_payload_from_jwt(
-        token, settings.refresh_jwt_key
+    payload = _extract_correct_payload_from_token(
+        token, settings.refresh_token_key
     )
     return RefreshTokenPayload(**payload)

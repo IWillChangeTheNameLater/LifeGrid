@@ -17,7 +17,7 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
 
-def _create_jwt(
+def _create_token(
     payload: dict|SQLModel, seconds_to_expire: int, key: str
 ) -> str:
     if isinstance(payload, SQLModel):
@@ -25,19 +25,19 @@ def _create_jwt(
     else:
         payload = payload.copy()
     payload['exp'] = datetime.now(UTC) + timedelta(seconds=seconds_to_expire)
-    encoded_jwt = jwt.encode(payload, key, settings.jwt_algorithm)
-    return encoded_jwt
+    encoded_token = jwt.encode(payload, key, settings.token_crypt_algorithm)
+    return encoded_token
 
 
-def create_access_jwt(payload: dict|SQLModel) -> str:
-    return _create_jwt(
-        payload, settings.access_jwt_exp_sec, settings.access_jwt_key
+def create_access_token(payload: dict|SQLModel) -> str:
+    return _create_token(
+        payload, settings.access_token_exp_sec, settings.access_token_key
     )
 
 
-def create_refresh_jwt(payload: dict|SQLModel) -> str:
-    return _create_jwt(
-        payload, settings.refresh_jwt_exp_sec, settings.refresh_jwt_key
+def create_refresh_token(payload: dict|SQLModel) -> str:
+    return _create_token(
+        payload, settings.refresh_token_exp_sec, settings.refresh_token_key
     )
 
 

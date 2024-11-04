@@ -4,7 +4,7 @@ from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
 
-from .dependencies import get_refresh_jwt_payload
+from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
 from .security import authenticate_user, hash_password
 from .utils import create_tokens_from_user, set_tokens_in_cookies
@@ -47,7 +47,7 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
 async def refresh(
     response: Response,
     refresh_token_payload: RefreshTokenPayload = Depends(
-    get_refresh_jwt_payload
+    get_refresh_token_payload
     )
 ) -> Tokens:
     user = await UsersDAO.fetch_by_primary_key(refresh_token_payload.sub)
