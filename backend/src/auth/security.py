@@ -9,12 +9,12 @@ from users.models import Users
 from .models import AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+def hash_text(text: str) -> str:
+    return bcrypt.hashpw(text.encode(), bcrypt.gensalt()).decode()
 
 
-def verify_password(password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(password.encode(), hashed_password.encode())
+def verify_hashed_text(text: str, hashed_text: str) -> bool:
+    return bcrypt.checkpw(text.encode(), hashed_text.encode())
 
 
 def _create_token(payload: BaseTokenPayload, key: str) -> str:
@@ -48,6 +48,6 @@ def _extract_correct_payload_from_token(token: str|None, key: str) -> dict:
 
 async def authenticate_user(email: EmailStr, password: str) -> Users|None:
     user = await UsersDAO.fetch_by_email(email)
-    if user and verify_password(password, user.hashed_password):
+    if user and verify_hashed_text(password, user.hashed_password):
         return user
     return None

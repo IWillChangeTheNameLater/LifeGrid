@@ -6,7 +6,7 @@ from users.models import UserLogin, UserRegister, Users
 
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
-from .security import authenticate_user, hash_password
+from .security import authenticate_user, hash_text
 from .utils import create_tokens_from_user, set_tokens_in_cookies
 
 
@@ -19,7 +19,7 @@ async def register(response: Response, user_register: UserRegister) -> Tokens:
     if user:
         raise UserAlreadyExistsException
 
-    hashed_password = hash_password(user_register.password)
+    hashed_password = hash_text(user_register.password)
     user = Users(email=user_register.email, hashed_password=hashed_password)
     await UsersDAO.add(user)
 
