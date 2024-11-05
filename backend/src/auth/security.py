@@ -1,13 +1,12 @@
-from datetime import datetime, timedelta, UTC
-
 import bcrypt, jwt
 from pydantic import EmailStr
-from sqlmodel import SQLModel
 
 from config import settings
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import Users
+
+from .models import AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload
 
 
 def hash_password(password: str) -> str:
@@ -18,28 +17,19 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
 
-def _create_token(
-    payload: dict|SQLModel, seconds_to_expire: int, key: str
-) -> str:
-    if isinstance(payload, SQLModel):
-        payload = payload.model_dump()
-    else:
-        payload = payload.copy()
-    payload['exp'] = datetime.now(UTC) + timedelta(seconds=seconds_to_expire)
-    encoded_token = jwt.encode(payload, key, settings.token_crypt_algorithm)
+def _create_token(payload: BaseTokenPayload, key: str) -> str:
+    encoded_token = jwt.encode(
+        payload.model_dump(), key, settings.token_crypt_algorithm
+    )
     return encoded_token
 
 
-def create_access_token(payload: dict|SQLModel) -> str:
-    return _create_token(
-        payload, settings.access_token_exp_sec, settings.access_token_key
-    )
+def create_access_token(payload: AccessTokenPayload) -> str:
+    return _create_token(payload, settings.access_token_key)
 
 
-def create_refresh_token(payload: dict|SQLModel) -> str:
-    return _create_token(
-        payload, settings.refresh_token_exp_sec, settings.refresh_token_key
-    )
+def create_refresh_token(payload: RefreshTokenPayload) -> str:
+    return _create_token(payload, settings.refresh_token_key)
 
 
 def _extract_correct_payload_from_token(token: str|None, key: str) -> dict:

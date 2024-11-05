@@ -7,6 +7,9 @@ from .security import create_access_token, create_refresh_token
 
 
 def create_tokens_from_user(user: Users) -> Tokens:
+    if user.id is None:
+        raise ValueError("User's id is None")
+
     access_token = create_access_token(
         AccessTokenPayload(sub=user.id, email=user.email)
     )
