@@ -30,6 +30,7 @@ async def register(
     assert new_user
 
     tokens = create_tokens_from_user(new_user, device_id)
+    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
 
     return tokens
