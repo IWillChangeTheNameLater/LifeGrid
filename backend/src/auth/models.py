@@ -45,8 +45,8 @@ class RefreshTokenPayload(BaseTokenPayload):
 
 
 class IssuedTokens(SQLModel, table=True):
-    sub: int = Field(index=True)
-    device_id: str = Field(index=True)
+    sub: int = Field(primary_key=True)
+    device_id: str = Field(primary_key=True)
     exp: int
     token: str
     is_revoked: bool = Field(default=False)
