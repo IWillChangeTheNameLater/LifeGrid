@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+
+parent_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(parent_dir))
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -5,9 +12,10 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.config import settings
+from config import settings
 from sqlmodel import SQLModel
-from src.users.models import Users
+from users.models import Users
+from auth.models import IssuedTokens
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
