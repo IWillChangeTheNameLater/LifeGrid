@@ -26,12 +26,12 @@ class IssuedTokensDAO(BaseDAO):
             await session.commit()
 
     @classmethod
-    async def revoke_former_token(cls, token: IssuedTokens) -> None:
+    async def revoke_former_token(cls, token: RefreshTokenPayload) -> None:
         async with init_session() as session:
             statement = select(cls.model).where(
                 cls.model.sub == token.sub,
                 cls.model.device_id == token.device_id,
-                cls.model.token == token.token
+                cls.model.token == create_refresh_token(token)
             )
             former_token = (await session.exec(statement)).one()
             if former_token.is_revoked:
