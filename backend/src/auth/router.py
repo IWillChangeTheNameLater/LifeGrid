@@ -4,6 +4,7 @@ from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
 
+from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
 from .security import authenticate_user, hash_text
@@ -27,6 +28,7 @@ async def register(
 
     new_user = await UsersDAO.fetch_by_email(user_register.email)
     assert new_user
+
     tokens = create_tokens_from_user(new_user, device_id)
     set_tokens_in_cookies(response, tokens)
 
@@ -42,6 +44,7 @@ async def login(
         raise IncorrectEmailOrPasswordException
 
     tokens = create_tokens_from_user(user, device_id)
+    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
 
     return tokens
@@ -58,15 +61,29 @@ async def refresh(
     user = await UsersDAO.fetch_by_primary_key(refresh_token_payload.sub)
     if not user:
         raise UserIsNotPresentException
-    tokens = create_tokens_from_user(user, device_id)
 
+    try:
+        await IssuedTokensDAO.revoke_former_token(refresh_token_payload)
+    except TokenAlreadyRevoked:
+        assert user.id
+        await IssuedTokensDAO.revoke_user_tokens(user.id, device_id)
+        raise
+
+    tokens = create_tokens_from_user(user, device_id)
+    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
 
     return tokens
 
 
 @router.post('/logout')
-async def logout(response: Response) -> None:
-    invalid_tokens = Tokens(access_token='', refresh_token='')
+async def logout(
+    response: Response,
+    refresh_token_payload: RefreshTokenPayload = Depends(
+    get_refresh_token_payload
+    )
+) -> None:
+    await IssuedTokensDAO.revoke_former_token(refresh_token_payload)
 
+    invalid_tokens = Tokens(access_token='', refresh_token='')
     set_tokens_in_cookies(response, invalid_tokens)
