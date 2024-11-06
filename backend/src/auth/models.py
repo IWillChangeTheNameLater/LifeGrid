@@ -1,42 +1,51 @@
 from datetime import datetime, timedelta, UTC
-from typing import Callable
+from functools import partial
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import EmailStr
+from sqlmodel import Field, SQLModel
 
 from config import settings
 
 
-class Tokens(BaseModel):
+def _calculate_expiration_time(seconds_to_expire: int) -> int:
+    expiration_datetime = datetime.now(UTC) + timedelta(
+        seconds=seconds_to_expire
+    )
+    expiration_time = int(expiration_datetime.timestamp())
+    return expiration_time
+
+
+class Tokens(SQLModel):
     access_token: str
     refresh_token: str
     tokens_type: str = "Bearer"
 
 
-class BaseTokenPayload(BaseModel):
+class BaseTokenPayload(SQLModel):
     sub: int
-
-
-def _expiration_time_factory(seconds_to_expire: int) -> Callable[[], int]:
-    expiration_datetime = datetime.now(UTC) + timedelta(
-        seconds=seconds_to_expire
-    )
-    expiration_time = int(expiration_datetime.timestamp())
-    return lambda: expiration_time
 
 
 class AccessTokenPayload(BaseTokenPayload):
     email: EmailStr
 
     exp: int = Field(
-        default_factory=_expiration_time_factory(
-        settings.access_token_exp_sec
+        default_factory=partial(
+        _calculate_expiration_time, settings.access_token_exp_sec
         )
     )
 
 
 class RefreshTokenPayload(BaseTokenPayload):
     exp: int = Field(
-        default_factory=_expiration_time_factory(
-        settings.refresh_token_exp_sec
+        default_factory=partial(
+        _calculate_expiration_time, settings.refresh_token_exp_sec
         )
     )
+
+
+class IssuedTokens(SQLModel, table=True):
+    sub: int = Field(index=True)
+    device_id: str = Field(index=True)
+    exp: int
+    token: str
+    is_revoked: bool = Field(default=False)
