@@ -53,7 +53,6 @@ async def login(
 
 @router.post('/refresh')
 async def refresh(
-    device_id: str,
     response: Response,
     refresh_token_payload: RefreshTokenPayload = Depends(
     get_refresh_token_payload
@@ -67,10 +66,12 @@ async def refresh(
         await IssuedTokensDAO.revoke_former_token(refresh_token_payload)
     except TokenAlreadyRevoked:
         assert user.id
-        await IssuedTokensDAO.revoke_user_tokens(user.id, device_id)
+        await IssuedTokensDAO.revoke_user_tokens(
+            refresh_token_payload.sub, refresh_token_payload.device_id
+        )
         raise
 
-    tokens = create_tokens_from_user(user, device_id)
+    tokens = create_tokens_from_user(user, refresh_token_payload.device_id)
     await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
 
