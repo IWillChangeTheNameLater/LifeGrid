@@ -41,6 +41,7 @@ class RefreshTokenPayload(BaseTokenPayload):
         _calculate_expiration_time, settings.refresh_token_exp_sec
         )
     )
+    device_id: str
 
 
 class IssuedTokens(SQLModel, table=True):

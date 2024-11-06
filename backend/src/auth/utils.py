@@ -6,14 +6,16 @@ from .models import AccessTokenPayload, RefreshTokenPayload, Tokens
 from .security import create_access_token, create_refresh_token
 
 
-def create_tokens_from_user(user: Users) -> Tokens:
+def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
     if user.id is None:
         raise ValueError("User's id is None")
 
     access_token = create_access_token(
         AccessTokenPayload(sub=user.id, email=user.email)
     )
-    refresh_token = create_refresh_token(RefreshTokenPayload(sub=user.id))
+    refresh_token = create_refresh_token(
+        RefreshTokenPayload(sub=user.id, device_id=device_id)
+    )
     return Tokens(access_token=access_token, refresh_token=refresh_token)
 
 

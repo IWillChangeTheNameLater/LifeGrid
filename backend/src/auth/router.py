@@ -14,7 +14,9 @@ router = APIRouter(prefix='/auth')
 
 
 @router.post('/register')
-async def register(response: Response, user_register: UserRegister) -> Tokens:
+async def register(
+    response: Response, user_register: UserRegister, device_id: str
+) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)
     if user:
         raise UserAlreadyExistsException
@@ -25,19 +27,21 @@ async def register(response: Response, user_register: UserRegister) -> Tokens:
 
     new_user = await UsersDAO.fetch_by_email(user_register.email)
     assert new_user
-    tokens = create_tokens_from_user(new_user)
+    tokens = create_tokens_from_user(new_user, device_id)
     set_tokens_in_cookies(response, tokens)
 
     return tokens
 
 
 @router.post('/login')
-async def login(response: Response, user_login: UserLogin) -> Tokens:
+async def login(
+    response: Response, user_login: UserLogin, device_id: str
+) -> Tokens:
     user = await authenticate_user(user_login.email, user_login.password)
     if not user:
         raise IncorrectEmailOrPasswordException
 
-    tokens = create_tokens_from_user(user)
+    tokens = create_tokens_from_user(user, device_id)
     set_tokens_in_cookies(response, tokens)
 
     return tokens
@@ -45,6 +49,7 @@ async def login(response: Response, user_login: UserLogin) -> Tokens:
 
 @router.post('/refresh')
 async def refresh(
+    device_id: str,
     response: Response,
     refresh_token_payload: RefreshTokenPayload = Depends(
     get_refresh_token_payload
@@ -53,7 +58,7 @@ async def refresh(
     user = await UsersDAO.fetch_by_primary_key(refresh_token_payload.sub)
     if not user:
         raise UserIsNotPresentException
-    tokens = create_tokens_from_user(user)
+    tokens = create_tokens_from_user(user, device_id)
 
     set_tokens_in_cookies(response, tokens)
 
