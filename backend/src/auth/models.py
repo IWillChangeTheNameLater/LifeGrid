@@ -45,6 +45,8 @@ class RefreshTokenPayload(BaseTokenPayload):
 
 
 class IssuedTokens(SQLModel, table=True):
+    __tablename__ = 'issued_tokens'
+
     sub: int = Field(primary_key=True)
     device_id: str = Field(primary_key=True)
     exp: int
