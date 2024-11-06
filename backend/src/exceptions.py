@@ -37,3 +37,8 @@ class TokenAbsentException(LifeGridException):
 class IncorrectTokenFormatException(LifeGridException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Incorrect token format'
+
+
+class TokenAlreadyRevoked(LifeGridException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = 'The token has already been revoked'
