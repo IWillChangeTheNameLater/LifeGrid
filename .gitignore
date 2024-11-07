@@ -156,4 +156,4 @@ cython_debug/
 .idea/
 
 # Alembic
-migrations/versions/
+**/migrations/versions/*.py
