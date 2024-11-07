@@ -1,10 +1,10 @@
 from fastapi import Depends, Request
+import jwt
 
 from config import settings
 from exceptions import *
 
 from .models import AccessTokenPayload, RefreshTokenPayload, TokenFunction
-from .security import _extract_valid_token_payload
 
 
 def _get_access_token(request: Request) -> str:
@@ -21,6 +21,18 @@ def _get_refresh_token(request: Request) -> str:
         return token
     else:
         raise TokenAbsentException
+
+
+def _extract_valid_token_payload(token: str, key: str) -> dict:
+    try:
+        payload: dict = jwt.decode(
+            token, key, algorithms=[settings.token_crypt_algorithm]
+        )
+        return payload
+    except jwt.PyJWTError:
+        raise TokenExpiredException
+    except TypeError:
+        raise IncorrectTokenFormatException
 
 
 def get_access_token_payload(

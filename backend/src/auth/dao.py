@@ -27,7 +27,7 @@ class IssuedTokensDAO(BaseDAO):
             await session.commit()
 
     @classmethod
-    async def revoke_current_token(cls, token: RefreshTokenPayload) -> None:
+    async def revoke_token(cls, token: RefreshTokenPayload) -> None:
         async with init_session() as session:
             statement = select(cls.model).where(cls.model.jti == token.jti)
             current_token = (await session.exec(statement)).one()

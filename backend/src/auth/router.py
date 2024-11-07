@@ -9,7 +9,10 @@ from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
 from .security import (
-    authenticate_user, create_tokens_from_user, hash_text,
+    authenticate_user,
+    create_tokens_from_user,
+    give_user_tokens,
+    hash_text,
     set_tokens_in_cookies,
 )
 
@@ -34,10 +37,7 @@ async def register(
         await session.commit()
         await session.refresh(new_user)
 
-    tokens = create_tokens_from_user(new_user, device_id)
-    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
-    set_tokens_in_cookies(response, tokens)
-    return tokens
+    return await give_user_tokens(response, new_user, device_id)
 
 
 @router.post('/login')
@@ -48,10 +48,7 @@ async def login(
     if not user:
         raise IncorrectEmailOrPasswordException
 
-    tokens = create_tokens_from_user(user, device_id)
-    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
-    set_tokens_in_cookies(response, tokens)
-    return tokens
+    return await give_user_tokens(response, user, device_id)
 
 
 @router.post('/refresh')
@@ -66,7 +63,7 @@ async def refresh(
         raise UserIsNotPresentException
 
     try:
-        await IssuedTokensDAO.revoke_current_token(refresh_token_payload)
+        await IssuedTokensDAO.revoke_token(refresh_token_payload)
     except TokenAlreadyRevoked:
         assert user.id
         await IssuedTokensDAO.revoke_user_device_tokens(
@@ -74,10 +71,9 @@ async def refresh(
         )
         raise
 
-    tokens = create_tokens_from_user(user, refresh_token_payload.device_id)
-    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
-    set_tokens_in_cookies(response, tokens)
-    return tokens
+    return await give_user_tokens(
+        response, user, refresh_token_payload.device_id
+    )
 
 
 @router.post('/logout')
@@ -87,7 +83,7 @@ async def logout(
     get_refresh_token_payload
     )
 ) -> None:
-    await IssuedTokensDAO.revoke_current_token(refresh_token_payload)
+    await IssuedTokensDAO.revoke_token(refresh_token_payload)
 
     invalid_tokens = Tokens(access_token='', refresh_token='')
     set_tokens_in_cookies(response, invalid_tokens)

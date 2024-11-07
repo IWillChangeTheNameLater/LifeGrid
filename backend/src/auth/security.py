@@ -3,10 +3,11 @@ from fastapi import Response
 from pydantic import EmailStr
 
 from config import settings
-from exceptions import *
 from users.dao import UsersDAO
 from users.models import Users
 
+from .dao import IssuedTokensDAO
+from .dependencies import get_refresh_token_payload
 from .models import (
     AccessTokenPayload,
     BaseTokenPayload,
@@ -39,18 +40,6 @@ def create_refresh_token(payload: RefreshTokenPayload) -> str:
     return _create_token(payload, settings.refresh_token_key)
 
 
-def _extract_valid_token_payload(token: str, key: str) -> dict:
-    try:
-        payload: dict = jwt.decode(
-            token, key, algorithms=[settings.token_crypt_algorithm]
-        )
-        return payload
-    except jwt.PyJWTError:
-        raise TokenExpiredException
-    except TypeError:
-        raise IncorrectTokenFormatException
-
-
 async def authenticate_user(email: EmailStr, password: str) -> Users|None:
     user = await UsersDAO.fetch_by_email(email)
     if user and verify_hashed_text(password, user.hashed_password):
@@ -76,3 +65,12 @@ def set_tokens_in_cookies(response: Response, tokens: Tokens) -> None:
     response.set_cookie(
         TokenFunction.refresh.value, tokens.refresh_token, httponly=True
     )
+
+
+async def give_user_tokens(
+    response: Response, user: Users, device_id: str
+) -> Tokens:
+    tokens = create_tokens_from_user(user, device_id)
+    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
+    set_tokens_in_cookies(response, tokens)
+    return tokens
