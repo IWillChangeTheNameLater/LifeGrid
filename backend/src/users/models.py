@@ -8,7 +8,10 @@ class BaseUser(SQLModel):
 
 
 class Users(BaseUser, table=True):
-    id: str = Field(default_factory=ULID, primary_key=True, max_length=26)
+    id: str = Field(
+        default_factory=lambda: str(ULID()), primary_key=True, max_length=26
+    )
+
     email: EmailStr = Field(index=True)
     hashed_password: str
 
