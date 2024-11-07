@@ -1,8 +1,6 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, Response
 
-from database import AsyncSession, session_dependency
+from database import session_dependency
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
@@ -20,7 +18,7 @@ router = APIRouter(prefix='/auth')
 @router.post('/register')
 async def register(
     response: Response, user_register: UserRegister, device_id: str,
-    session: Annotated[AsyncSession, Depends(session_dependency)]
+    session: session_dependency
 ) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)
     if user:
