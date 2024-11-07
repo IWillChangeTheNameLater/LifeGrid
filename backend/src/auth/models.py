@@ -55,7 +55,7 @@ class RefreshTokenPayload(BaseTokenPayload):
 class IssuedTokens(SQLModel, table=True):
     __tablename__ = 'issued_tokens'
 
-    jti: ULID = Field(default_factory=ULID, max_length=26, primary_key=True)
+    jti: str = Field(default_factory=ULID, max_length=26, primary_key=True)
     sub: str = Field(index=True)
     device_id: str = Field(index=True)
     exp: int
