@@ -22,7 +22,7 @@ class Tokens(SQLModel):
 
 
 class BaseTokenPayload(SQLModel):
-    sub: int
+    sub: str
 
 
 class AccessTokenPayload(BaseTokenPayload):
@@ -47,7 +47,7 @@ class RefreshTokenPayload(BaseTokenPayload):
 class IssuedTokens(SQLModel, table=True):
     __tablename__ = 'issued_tokens'
 
-    sub: int = Field(primary_key=True)
+    sub: str = Field(primary_key=True)
     device_id: str = Field(primary_key=True)
     exp: int
     token: str

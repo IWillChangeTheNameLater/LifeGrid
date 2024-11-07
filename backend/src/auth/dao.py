@@ -42,7 +42,7 @@ class IssuedTokensDAO(BaseDAO):
                 await session.commit()
 
     @classmethod
-    async def revoke_user_tokens(cls, sub: int, device_id: str) -> None:
+    async def revoke_user_tokens(cls, sub: str, device_id: str) -> None:
         async with init_session() as session:
             statement = select(
                 cls.model

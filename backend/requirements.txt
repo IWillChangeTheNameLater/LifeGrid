@@ -8,3 +8,4 @@ uvicorn~=0.30.6
 pydantic[email]
 pyjwt[crypto]
 bcrypt~=4.2.0
+python-ulid[pydantic]
