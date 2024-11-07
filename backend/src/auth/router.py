@@ -7,8 +7,12 @@ from users.models import UserLogin, UserRegister, Users
 from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
-from .security import authenticate_user, hash_text
-from .utils import create_tokens_from_user, set_tokens_in_cookies
+from .security import (
+    authenticate_user,
+    create_tokens_from_user,
+    hash_text,
+    set_tokens_in_cookies,
+)
 
 
 router = APIRouter(prefix='/auth')
