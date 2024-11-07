@@ -8,10 +8,7 @@ from users.dao import UsersDAO
 from users.models import Users
 
 from .models import (
-    AccessTokenPayload,
-    BaseTokenPayload,
-    RefreshTokenPayload,
-    TokenFunction,
+    AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload, TokenFunction,
     Tokens,
 )
 

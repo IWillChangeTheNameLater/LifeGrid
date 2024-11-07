@@ -6,21 +6,21 @@ from base_dao import BaseDAO
 from database import init_session
 from exceptions import *
 
-from .models import IssuedTokens, RefreshTokenPayload
-from .security import create_refresh_token
+from .models import IssuedRefreshTokens, RefreshTokenPayload
+from .security import create_refresh_token, hash_text
 
 
 class IssuedTokensDAO(BaseDAO):
-    model = IssuedTokens
+    model = IssuedRefreshTokens
 
     @classmethod
     async def add(cls, token: RefreshTokenPayload) -> None:
         async with init_session() as session:
-            issued_token = IssuedTokens(
+            issued_token = IssuedRefreshTokens(
                 sub=token.sub,
                 device_id=token.device_id,
                 exp=token.exp,
-                token=create_refresh_token(token)
+                hashed_token=hash_text(create_refresh_token(token))
             )
             session.add(issued_token)
             await session.commit()
