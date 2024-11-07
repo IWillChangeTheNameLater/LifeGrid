@@ -4,6 +4,7 @@ from functools import partial
 
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
+from ulid import ULID
 
 from config import settings
 
@@ -42,6 +43,7 @@ class AccessTokenPayload(BaseTokenPayload):
 
 
 class RefreshTokenPayload(BaseTokenPayload):
+    jti: ULID = Field(default_factory=ULID)
     exp: int = Field(
         default_factory=partial(
         _calculate_expiration_time, settings.refresh_token_exp_sec
@@ -53,8 +55,9 @@ class RefreshTokenPayload(BaseTokenPayload):
 class IssuedTokens(SQLModel, table=True):
     __tablename__ = 'issued_tokens'
 
-    sub: str = Field(primary_key=True)
-    device_id: str = Field(primary_key=True)
+    jti: ULID = Field(default_factory=ULID, max_length=26, primary_key=True)
+    sub: str = Field(index=True)
+    device_id: str = Field(index=True)
     exp: int
     token: str
     is_revoked: bool = Field(default=False)

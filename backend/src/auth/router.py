@@ -67,10 +67,10 @@ async def refresh(
         raise UserIsNotPresentException
 
     try:
-        await IssuedTokensDAO.revoke_former_token(refresh_token_payload)
+        await IssuedTokensDAO.revoke_current_token(refresh_token_payload)
     except TokenAlreadyRevoked:
         assert user.id
-        await IssuedTokensDAO.revoke_user_tokens(
+        await IssuedTokensDAO.revoke_user_device_tokens(
             refresh_token_payload.sub, refresh_token_payload.device_id
         )
         raise
@@ -89,7 +89,7 @@ async def logout(
     get_refresh_token_payload
     )
 ) -> None:
-    await IssuedTokensDAO.revoke_former_token(refresh_token_payload)
+    await IssuedTokensDAO.revoke_current_token(refresh_token_payload)
 
     invalid_tokens = Tokens(access_token='', refresh_token='')
     set_tokens_in_cookies(response, invalid_tokens)
