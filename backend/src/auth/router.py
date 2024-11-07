@@ -6,7 +6,7 @@ from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
 
 from .dao import IssuedTokensDAO
-from .dependencies import get_refresh_token_payload
+from .dependencies import refresh_payload_dependency
 from .models import RefreshTokenPayload, Tokens
 from .security import authenticate_user, hash_text
 from .utils import give_user_tokens, set_tokens_in_cookies
@@ -48,10 +48,7 @@ async def login(
 
 @router.post('/refresh')
 async def refresh(
-    response: Response,
-    refresh_token_payload: RefreshTokenPayload = Depends(
-    get_refresh_token_payload
-    )
+    response: Response, refresh_token_payload: refresh_payload_dependency
 ) -> Tokens:
     user = await UsersDAO.fetch_by_primary_key(refresh_token_payload.sub)
     if not user:
@@ -66,10 +63,7 @@ async def refresh(
 
 @router.post('/logout')
 async def logout(
-    response: Response,
-    refresh_token_payload: RefreshTokenPayload = Depends(
-    get_refresh_token_payload
-    )
+    response: Response, refresh_token_payload: refresh_payload_dependency
 ) -> None:
     await IssuedTokensDAO.revoke_token(refresh_token_payload)
 

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends, Request
 import jwt
 
@@ -35,15 +37,23 @@ def _extract_valid_token_payload(token: str, key: str) -> dict:
         raise IncorrectTokenFormatException
 
 
-def get_access_token_payload(
+def _get_access_token_payload(
     token: str = Depends(_get_access_token)
 ) -> AccessTokenPayload:
     payload = _extract_valid_token_payload(token, settings.access_token_key)
     return AccessTokenPayload(**payload)
 
 
-def get_refresh_token_payload(
+access_payload_dependency = Annotated[AccessTokenPayload,
+    Depends(_get_access_token_payload)]
+
+
+def _get_refresh_token_payload(
     token: str = Depends(_get_refresh_token)
 ) -> RefreshTokenPayload:
     payload = _extract_valid_token_payload(token, settings.refresh_token_key)
     return RefreshTokenPayload(**payload)
+
+
+refresh_payload_dependency = Annotated[RefreshTokenPayload,
+    Depends(_get_refresh_token_payload)]

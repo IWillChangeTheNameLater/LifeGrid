@@ -3,7 +3,7 @@ from fastapi import Response
 from users.models import Users
 
 from .dao import IssuedTokensDAO
-from .dependencies import get_refresh_token_payload
+from .dependencies import _get_refresh_token_payload
 from .models import (
     AccessTokenPayload,
     RefreshTokenPayload,
@@ -37,6 +37,6 @@ async def give_user_tokens(
     response: Response, user: Users, device_id: str
 ) -> Tokens:
     tokens = create_tokens_from_user(user, device_id)
-    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
+    await IssuedTokensDAO.add(_get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
     return tokens
