@@ -39,18 +39,6 @@ class IssuedTokensDAO(BaseDAO):
                 await session.commit()
 
     @classmethod
-    async def revoke_user_device_tokens(cls, sub: str, device_id: str) -> None:
-        async with init_session() as session:
-            statement = select(
-                cls.model
-            ).where(cls.model.sub == sub, cls.model.device_id == device_id)
-            user_tokens = await session.exec(statement)
-            for token in user_tokens:
-                token.is_revoked = True
-                session.add(token)
-            await session.commit()
-
-    @classmethod
     async def clean_expired(cls) -> None:
         async with init_session() as session:
             current_time = int(datetime.now(UTC).timestamp())

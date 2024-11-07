@@ -57,14 +57,7 @@ async def refresh(
     if not user:
         raise UserIsNotPresentException
 
-    try:
-        await IssuedTokensDAO.revoke_token(refresh_token_payload)
-    except TokenAlreadyRevoked:
-        assert user.id
-        await IssuedTokensDAO.revoke_user_device_tokens(
-            refresh_token_payload.sub, refresh_token_payload.device_id
-        )
-        raise
+    await IssuedTokensDAO.revoke_token(refresh_token_payload)
 
     return await give_user_tokens(
         response, user, refresh_token_payload.device_id
