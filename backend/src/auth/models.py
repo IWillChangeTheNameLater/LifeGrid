@@ -43,7 +43,7 @@ class AccessTokenPayload(BaseTokenPayload):
 
 
 class RefreshTokenPayload(BaseTokenPayload):
-    jti: ULID = Field(default_factory=ULID)
+    jti: str = Field(default_factory=lambda: str(ULID()), max_length=26)
     exp: int = Field(
         default_factory=partial(
         _calculate_expiration_time, settings.refresh_token_exp_sec
@@ -55,7 +55,9 @@ class RefreshTokenPayload(BaseTokenPayload):
 class IssuedRefreshTokens(SQLModel, table=True):
     __tablename__ = 'issued_refresh_tokens'
 
-    jti: str = Field(default_factory=ULID, max_length=26, primary_key=True)
+    jti: str = Field(
+        default_factory=lambda: str(ULID()), max_length=26, primary_key=True
+    )
     sub: str = Field(index=True)
     device_id: str = Field(index=True)
     exp: int

@@ -8,9 +8,7 @@ from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
 from .security import (
-    authenticate_user,
-    create_tokens_from_user,
-    hash_text,
+    authenticate_user, create_tokens_from_user, hash_text,
     set_tokens_in_cookies,
 )
 
@@ -27,16 +25,14 @@ async def register(
         raise UserAlreadyExistsException
 
     hashed_password = hash_text(user_register.password)
-    user = Users(email=user_register.email, hashed_password=hashed_password)
-    await UsersDAO.add(user)
-
-    new_user = await UsersDAO.fetch_by_email(user_register.email)
-    assert new_user
+    new_user = Users(
+        email=user_register.email, hashed_password=hashed_password
+    )
+    await UsersDAO.add(new_user)
 
     tokens = create_tokens_from_user(new_user, device_id)
     await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
-
     return tokens
 
 
@@ -51,7 +47,6 @@ async def login(
     tokens = create_tokens_from_user(user, device_id)
     await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
-
     return tokens
 
 
@@ -78,7 +73,6 @@ async def refresh(
     tokens = create_tokens_from_user(user, refresh_token_payload.device_id)
     await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
     set_tokens_in_cookies(response, tokens)
-
     return tokens
 
 

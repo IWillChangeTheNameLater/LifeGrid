@@ -17,6 +17,7 @@ class IssuedTokensDAO(BaseDAO):
     async def add(cls, token: RefreshTokenPayload) -> None:
         async with init_session() as session:
             issued_token = IssuedRefreshTokens(
+                jti=token.jti,
                 sub=token.sub,
                 device_id=token.device_id,
                 exp=token.exp,
