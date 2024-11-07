@@ -2,7 +2,12 @@ from fastapi import Response
 
 from users.models import Users
 
-from .models import AccessTokenPayload, RefreshTokenPayload, TokenFunction, Tokens
+from .models import (
+    AccessTokenPayload,
+    RefreshTokenPayload,
+    TokenFunction,
+    Tokens,
+)
 from .security import create_access_token, create_refresh_token
 
 
