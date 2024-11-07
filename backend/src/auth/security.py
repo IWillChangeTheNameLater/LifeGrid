@@ -32,9 +32,7 @@ def create_refresh_token(payload: RefreshTokenPayload) -> str:
     return _create_token(payload, settings.refresh_token_key)
 
 
-def _extract_correct_payload_from_token(token: str|None, key: str) -> dict:
-    if not token:
-        raise TokenAbsentException
+def _extract_valid_token_payload(token: str, key: str) -> dict:
     try:
         payload: dict = jwt.decode(
             token, key, algorithms=[settings.token_crypt_algorithm]

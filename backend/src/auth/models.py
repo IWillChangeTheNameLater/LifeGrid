@@ -1,10 +1,16 @@
 from datetime import datetime, timedelta, UTC
+from enum import Enum
 from functools import partial
 
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
 
 from config import settings
+
+
+class TokenFunction(Enum):
+    refresh = 'refresh_token'
+    access = 'access_token'
 
 
 def _calculate_expiration_time(seconds_to_expire: int) -> int:

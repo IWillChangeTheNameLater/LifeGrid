@@ -2,7 +2,7 @@ from fastapi import Response
 
 from users.models import Users
 
-from .models import AccessTokenPayload, RefreshTokenPayload, Tokens
+from .models import AccessTokenPayload, RefreshTokenPayload, TokenFunction, Tokens
 from .security import create_access_token, create_refresh_token
 
 
@@ -20,5 +20,7 @@ def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
 
 
 def set_tokens_in_cookies(response: Response, tokens: Tokens) -> None:
-    response.set_cookie('access_token', tokens.access_token)
-    response.set_cookie('refresh_token', tokens.refresh_token, httponly=True)
+    response.set_cookie(TokenFunction.access.value, tokens.access_token)
+    response.set_cookie(
+        TokenFunction.refresh.value, tokens.refresh_token, httponly=True
+    )
