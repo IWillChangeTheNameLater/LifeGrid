@@ -1,20 +1,11 @@
 import bcrypt, jwt
-from fastapi import Response
 from pydantic import EmailStr
 
 from config import settings
 from users.dao import UsersDAO
 from users.models import Users
 
-from .dao import IssuedTokensDAO
-from .dependencies import get_refresh_token_payload
-from .models import (
-    AccessTokenPayload,
-    BaseTokenPayload,
-    RefreshTokenPayload,
-    TokenFunction,
-    Tokens,
-)
+from .models import AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload
 
 
 def hash_text(text: str) -> str:
@@ -45,32 +36,3 @@ async def authenticate_user(email: EmailStr, password: str) -> Users|None:
     if user and verify_hashed_text(password, user.hashed_password):
         return user
     return None
-
-
-def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
-    if user.id is None:
-        raise ValueError("User's id is None")
-
-    access_token = create_access_token(
-        AccessTokenPayload(sub=user.id, email=user.email)
-    )
-    refresh_token = create_refresh_token(
-        RefreshTokenPayload(sub=user.id, device_id=device_id)
-    )
-    return Tokens(access_token=access_token, refresh_token=refresh_token)
-
-
-def set_tokens_in_cookies(response: Response, tokens: Tokens) -> None:
-    response.set_cookie(TokenFunction.access.value, tokens.access_token)
-    response.set_cookie(
-        TokenFunction.refresh.value, tokens.refresh_token, httponly=True
-    )
-
-
-async def give_user_tokens(
-    response: Response, user: Users, device_id: str
-) -> Tokens:
-    tokens = create_tokens_from_user(user, device_id)
-    await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
-    set_tokens_in_cookies(response, tokens)
-    return tokens

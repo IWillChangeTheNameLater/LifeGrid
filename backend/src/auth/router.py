@@ -4,16 +4,14 @@ from database import init_session
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
+from .utils import give_user_tokens, set_tokens_in_cookies
 
 from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
 from .security import (
     authenticate_user,
-    create_tokens_from_user,
-    give_user_tokens,
     hash_text,
-    set_tokens_in_cookies,
 )
 
 
@@ -22,7 +20,9 @@ router = APIRouter(prefix='/auth')
 
 @router.post('/register')
 async def register(
-    response: Response, user_register: UserRegister, device_id: str
+    response: Response,
+    user_register: UserRegister,
+    device_id: str,
 ) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)
     if user:
