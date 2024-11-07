@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response
 
+from database import init_session
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
@@ -28,7 +29,10 @@ async def register(
     new_user = Users(
         email=user_register.email, hashed_password=hashed_password
     )
-    await UsersDAO.add(new_user)
+    async with init_session() as session:
+        session.add(new_user)
+        await session.commit()
+        await session.refresh(new_user)
 
     tokens = create_tokens_from_user(new_user, device_id)
     await IssuedTokensDAO.add(get_refresh_token_payload(tokens.refresh_token))
