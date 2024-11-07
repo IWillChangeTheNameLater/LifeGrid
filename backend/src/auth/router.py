@@ -1,18 +1,17 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Response
 
-from database import init_session
+from database import AsyncSession, session_dependency
 from exceptions import *
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
-from .utils import give_user_tokens, set_tokens_in_cookies
 
 from .dao import IssuedTokensDAO
 from .dependencies import get_refresh_token_payload
 from .models import RefreshTokenPayload, Tokens
-from .security import (
-    authenticate_user,
-    hash_text,
-)
+from .security import authenticate_user, hash_text
+from .utils import give_user_tokens, set_tokens_in_cookies
 
 
 router = APIRouter(prefix='/auth')
@@ -20,9 +19,8 @@ router = APIRouter(prefix='/auth')
 
 @router.post('/register')
 async def register(
-    response: Response,
-    user_register: UserRegister,
-    device_id: str,
+    response: Response, user_register: UserRegister, device_id: str,
+    session: Annotated[AsyncSession, Depends(session_dependency)]
 ) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)
     if user:
@@ -32,10 +30,9 @@ async def register(
     new_user = Users(
         email=user_register.email, hashed_password=hashed_password
     )
-    async with init_session() as session:
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
+    session.add(new_user)
+    await session.commit()
+    await session.refresh(new_user)
 
     return await give_user_tokens(response, new_user, device_id)
 
