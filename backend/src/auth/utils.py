@@ -27,9 +27,9 @@ def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
 
 
 def set_tokens_in_cookies(response: Response, tokens: Tokens) -> None:
-    response.set_cookie(TokenFunction.access.value, tokens.access_token)
+    response.set_cookie(TokenFunction.ACCESS, tokens.access_token)
     response.set_cookie(
-        TokenFunction.refresh.value, tokens.refresh_token, httponly=True
+        TokenFunction.REFRESH, tokens.refresh_token, httponly=True
     )
 
 

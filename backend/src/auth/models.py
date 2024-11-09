@@ -9,9 +9,9 @@ from ulid import ULID
 from config import settings
 
 
-class TokenFunction(Enum):
-    refresh = 'refresh_token'
-    access = 'access_token'
+class TokenFunction(str, Enum):
+    REFRESH = 'refresh_token'
+    ACCESS = 'access_token'
 
 
 class Tokens(SQLModel):

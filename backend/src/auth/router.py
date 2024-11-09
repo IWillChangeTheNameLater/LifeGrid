@@ -17,7 +17,9 @@ router = APIRouter(prefix='/auth')
 
 @router.post('/register')
 async def register(
-    response: Response, user_register: UserRegister, device_id: str,
+    response: Response,
+    user_register: UserRegister,
+    device_id: str,
     session: session_dependency
 ) -> Tokens:
     user = await UsersDAO.fetch_by_email(user_register.email)

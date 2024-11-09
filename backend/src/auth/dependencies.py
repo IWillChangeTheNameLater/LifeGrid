@@ -10,7 +10,7 @@ from .models import AccessTokenPayload, RefreshTokenPayload, TokenFunction
 
 
 def _get_access_token(request: Request) -> str:
-    token = request.cookies.get(TokenFunction.access.value)
+    token = request.cookies.get(TokenFunction.ACCESS)
     if token:
         return token
     else:
@@ -18,7 +18,7 @@ def _get_access_token(request: Request) -> str:
 
 
 def _get_refresh_token(request: Request) -> str:
-    token = request.cookies.get(TokenFunction.refresh.value)
+    token = request.cookies.get(TokenFunction.REFRESH)
     if token:
         return token
     else:
