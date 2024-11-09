@@ -45,7 +45,7 @@ def _get_access_token_payload(
 
 
 access_payload_dependency = Annotated[AccessTokenPayload,
-    Depends(_get_access_token_payload)]
+                                      Depends(_get_access_token_payload)]
 
 
 def _get_refresh_token_payload(
@@ -56,4 +56,4 @@ def _get_refresh_token_payload(
 
 
 refresh_payload_dependency = Annotated[RefreshTokenPayload,
-    Depends(_get_refresh_token_payload)]
+                                       Depends(_get_refresh_token_payload)]

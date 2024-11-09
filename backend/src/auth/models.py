@@ -37,7 +37,7 @@ class AccessTokenPayload(BaseTokenPayload):
 
     exp: int = Field(
         default_factory=partial(
-        _calculate_expiration_time, settings.access_token_exp_sec
+            _calculate_expiration_time, settings.access_token_exp_sec
         )
     )
 
@@ -46,7 +46,7 @@ class RefreshTokenPayload(BaseTokenPayload):
     jti: str = Field(default_factory=lambda: str(ULID()), max_length=26)
     exp: int = Field(
         default_factory=partial(
-        _calculate_expiration_time, settings.refresh_token_exp_sec
+            _calculate_expiration_time, settings.refresh_token_exp_sec
         )
     )
     device_id: str
