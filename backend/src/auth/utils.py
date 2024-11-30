@@ -18,7 +18,11 @@ def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
         raise ValueError("User's id is None")
 
     access_token = create_access_token(
-        AccessTokenPayload(sub=user.id, email=user.email)
+        AccessTokenPayload(
+            sub=user.id,
+            email=user.email,
+            email_verified=user.is_email_verified
+        )
     )
     refresh_token = create_refresh_token(
         RefreshTokenPayload(sub=user.id, device_id=device_id)

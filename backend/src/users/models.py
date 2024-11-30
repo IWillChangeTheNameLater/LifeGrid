@@ -13,6 +13,7 @@ class Users(BaseUser, table=True):
     )
 
     email: EmailStr = Field(index=True)
+    is_email_verified: bool = False
     hashed_password: str
 
 

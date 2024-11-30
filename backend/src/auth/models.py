@@ -34,6 +34,7 @@ def _calculate_expiration_time(seconds_to_expire: int) -> int:
 
 class AccessTokenPayload(BaseTokenPayload):
     email: EmailStr
+    email_verified: bool
 
     exp: int = Field(
         default_factory=partial(
