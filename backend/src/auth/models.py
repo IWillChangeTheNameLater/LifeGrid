@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta, UTC
 from enum import Enum
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 from pydantic import EmailStr
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from ulid import ULID
 
 from config import settings
+
+if TYPE_CHECKING:
+    from users.models import Users
 
 
 class TokenFunction(str, Enum):
@@ -61,7 +64,12 @@ class IssuedRefreshTokens(SQLModel, table=True):
     jti: str = Field(
         default_factory=lambda: str(ULID()), max_length=26, primary_key=True
     )
-    sub: str = Field(index=True)
+    sub: str = Field(foreign_key='users.id', ondelete='CASCADE', index=True)
     device_id: str = Field(index=True)
     exp: int
     is_revoked: bool = Field(default=False)
+
+    user: 'Users' = Relationship(
+        back_populates='issued_refresh_tokens',
+        sa_relationship_kwargs={'lazy': 'selectin'}
+    )
