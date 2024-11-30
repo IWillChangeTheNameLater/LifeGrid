@@ -2,7 +2,6 @@ fastapi~=0.112.1
 pydantic-settings~=2.4.0
 sqlmodel~=0.0.21
 asyncpg~=0.29.0
-# TODO: Should the alembic be placed in the requirements.txt or in the requirements-dev.txt?
 alembic~=1.13.2
 uvicorn~=0.30.6
 pydantic[email]
