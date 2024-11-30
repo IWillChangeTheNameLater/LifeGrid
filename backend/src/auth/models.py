@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, UTC
 from enum import Enum
-from functools import partial
+from typing import Callable
 
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
@@ -32,22 +32,24 @@ def _calculate_expiration_time(seconds_to_expire: int) -> int:
     return expiration_time
 
 
+def expiration_time_factory(seconds_to_expire: int) -> Callable[[], int]:
+    return lambda: _calculate_expiration_time(seconds_to_expire)
+
+
 class AccessTokenPayload(BaseTokenPayload):
     email: EmailStr
     email_verified: bool
 
     exp: int = Field(
-        default_factory=partial(
-            _calculate_expiration_time, settings.access_token_exp_sec
-        )
+        default_factory=expiration_time_factory(settings.access_token_exp_sec)
     )
 
 
 class RefreshTokenPayload(BaseTokenPayload):
     jti: str = Field(default_factory=lambda: str(ULID()), max_length=26)
     exp: int = Field(
-        default_factory=partial(
-            _calculate_expiration_time, settings.refresh_token_exp_sec
+        default_factory=expiration_time_factory(
+            settings.refresh_token_exp_sec
         )
     )
     device_id: str
