@@ -62,5 +62,4 @@ class IssuedRefreshTokens(SQLModel, table=True):
     sub: str = Field(index=True)
     device_id: str = Field(index=True)
     exp: int
-    hashed_token: str
     is_revoked: bool = Field(default=False)
