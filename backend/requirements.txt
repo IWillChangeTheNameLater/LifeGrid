@@ -9,3 +9,5 @@ pydantic[email]
 pyjwt[crypto]
 bcrypt~=4.2.0
 python-ulid[pydantic]
+celery~=5.4.0
+flower~=2.0.1
