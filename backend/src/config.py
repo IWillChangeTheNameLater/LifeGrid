@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,6 +28,11 @@ class _Settings(BaseSettings):
 
     redis_host: str = 'localhost'
     redis_port: int = 6379
+
+    smtp_host: str = 'smtp.gmail.com'
+    smtp_port: int = 465
+    smtp_user: EmailStr = 'user@example.com'
+    smtp_pass: str = 'SMTP password'
 
 
 settings = _Settings()
