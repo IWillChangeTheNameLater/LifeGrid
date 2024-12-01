@@ -20,5 +20,8 @@ class _Settings(BaseSettings):
     access_token_exp_sec: int = 60*60
     refresh_token_exp_sec: int = 60*60*24*30
 
+    redis_host: str = 'localhost'
+    redis_port: int = 6379
+
 
 settings = _Settings()
