@@ -1,8 +1,13 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class _Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(
+        # Search for .env in the parent directory
+        env_file=Path(__file__).parent.parent/'.env'
+    )
 
     db_host: str = 'localhost'
     db_port: int = 5432
