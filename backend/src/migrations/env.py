@@ -7,15 +7,13 @@ sys.path.insert(0, str(parent_dir))
 
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
-
-from config import settings
+from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
-from users.models import Users
+
 from auth.models import IssuedRefreshTokens
+from config import settings
+from users.models import Users
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
