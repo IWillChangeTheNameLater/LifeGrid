@@ -29,6 +29,14 @@ class _Settings(BaseSettings):
     redis_host: str = 'localhost'
     redis_port: int = 6379
 
+    @property
+    def redis_broker_dsn(self) -> str:
+        return f'redis://{self.redis_host}:{self.redis_port}/1'
+
+    @property
+    def redis_backend_dsn(self) -> str:
+        return f'redis://{self.redis_host}:{self.redis_port}/0'
+
     smtp_host: str = 'smtp.gmail.com'
     smtp_port: int = 465
     smtp_user: EmailStr = 'user@example.com'
