@@ -37,7 +37,7 @@ class IssuedTokensDAO(BaseDAO):
                 await session.commit()
 
     @classmethod
-    async def clean_expired(cls) -> None:
+    async def delete_expired(cls) -> None:
         async with init_session() as session:
             current_time = int(datetime.now(UTC).timestamp())
             statement = select(cls.model).where(cls.model.exp < current_time)
