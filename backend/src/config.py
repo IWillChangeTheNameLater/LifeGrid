@@ -1,7 +1,14 @@
+from enum import IntEnum, unique
 from pathlib import Path
 
 from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+@unique
+class RedisDB(IntEnum):
+    RESULT_BACKEND = 0
+    MESSAGE_BROKER = 1
 
 
 class _Settings(BaseSettings):
@@ -31,11 +38,11 @@ class _Settings(BaseSettings):
 
     @property
     def redis_broker_dsn(self) -> str:
-        return f'redis://{self.redis_host}:{self.redis_port}/1'
+        return f'redis://{self.redis_host}:{self.redis_port}/{RedisDB.MESSAGE_BROKER.value}'
 
     @property
     def redis_backend_dsn(self) -> str:
-        return f'redis://{self.redis_host}:{self.redis_port}/0'
+        return f'redis://{self.redis_host}:{self.redis_port}/{RedisDB.RESULT_BACKEND.value}'
 
     smtp_host: str = 'smtp.gmail.com'
     smtp_port: int = 465
