@@ -1,8 +1,15 @@
+from enum import Enum, unique
 from pathlib import Path
 
 from celery import Celery
 
 from config import settings
+
+
+@unique
+class CeleryQueue(Enum):
+    LOW_PRIORITY = 'low_priority'
+    HIGH_PRIORITY = 'high_priority'
 
 
 celery_app = Celery(
