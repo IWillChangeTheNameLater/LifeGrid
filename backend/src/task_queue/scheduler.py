@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Any
 
 from celery.app.base import Celery
@@ -11,5 +12,5 @@ def setup_periodic_tasks(sender: Celery, **kwargs: dict[str, Any]) -> None:
     sender.add_periodic_task(
         name='Clear the database of expired tokens',
         sig=delete_expired_tokens.s(),
-        schedule=60.0
+        schedule=timedelta(days=1)
     )
