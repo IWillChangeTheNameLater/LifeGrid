@@ -9,9 +9,8 @@ celery_app = Celery(
     main=Path(__file__).parent.name,
     broker=settings.redis_broker_dsn,
     backend=settings.redis_backend_dsn,
+    include=['task_queue.scheduler', 'task_queue.tasks']
 )
-
-celery_app.autodiscover_tasks(['task_queue.scheduler', 'task_queue.tasks'])
 
 if __name__ == '__main__':
     celery_app.start()
