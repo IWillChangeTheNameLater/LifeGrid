@@ -2,6 +2,7 @@ from enum import Enum, unique
 from pathlib import Path
 
 from celery import Celery
+from kombu import Queue
 
 from config import settings
 
@@ -22,7 +23,9 @@ celery_app = Celery(
 )
 
 # Configuration
+celery_app.conf.task_create_missing_queues = False
 celery_app.conf.task_default_queue = CeleryQueue.DEFAULT.value
+celery_app.conf.task_queues = (Queue(q.value) for q in CeleryQueue)
 
 if __name__ == '__main__':
     celery_app.start()
