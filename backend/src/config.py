@@ -14,7 +14,8 @@ class RedisDB(IntEnum):
 class _Settings(BaseSettings):
     model_config = SettingsConfigDict(
         # Search for .env in the parent directory
-        env_file=Path(__file__).parent.parent/'.env'
+        env_file=Path(__file__).parent.parent/'.env',
+        frozen=True
     )
 
     db_host: str = 'localhost'
