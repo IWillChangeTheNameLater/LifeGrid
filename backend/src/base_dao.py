@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Generic, Sequence, Tuple, Type, TypeVar
+from typing import Any, Generic, Sequence, Type, TypeVar
 
 from sqlmodel import select, SQLModel
 

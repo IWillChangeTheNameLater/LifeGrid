@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Response
 
 from database import session_dependency
 from exceptions import *
@@ -7,7 +7,7 @@ from users.models import UserLogin, UserRegister, Users
 
 from .dao import IssuedTokensDAO
 from .dependencies import refresh_payload_dependency
-from .models import RefreshTokenPayload, Tokens
+from .models import Tokens
 from .security import authenticate_user, hash_text
 from .utils import give_user_tokens, set_tokens_in_cookies
 
