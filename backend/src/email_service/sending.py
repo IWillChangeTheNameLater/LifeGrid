@@ -11,7 +11,7 @@ def send_email(
     msg: EmailMessage,
     to_: EmailStr|list[EmailStr]|None = None,
     from_: EmailStr|None = settings.smtp_user,
-    sync_addrs: bool = False
+    sync_addrs: bool = True
 ) -> None:
     if sync_addrs:
         from_ = msg['From'] = from_ or msg.get('From')
