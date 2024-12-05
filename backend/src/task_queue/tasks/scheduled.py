@@ -3,7 +3,7 @@ import asyncio
 from celery import shared_task
 
 from auth.dao import IssuedTokensDAO
-from task_queue.worker import CeleryQueue
+from task_queue.celery_config import CeleryQueue
 
 
 event_loop = asyncio.get_event_loop()
