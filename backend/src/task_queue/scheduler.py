@@ -4,6 +4,7 @@ from typing import Any
 from celery.app.base import Celery
 
 from .tasks.scheduled import *
+from .worker import celery_app
 
 
 # noinspection PyUnusedLocal
