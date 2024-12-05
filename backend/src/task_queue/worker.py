@@ -26,6 +26,7 @@ celery_app = Celery(
 celery_app.conf.task_create_missing_queues = False
 celery_app.conf.task_default_queue = CeleryQueue.DEFAULT.value
 celery_app.conf.task_queues = (Queue(q.value) for q in CeleryQueue)
+celery_app.conf.worker_max_memory_per_child = 10*1024
 
 if __name__ == '__main__':
     celery_app.start()
