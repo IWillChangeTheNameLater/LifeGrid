@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Any, Generic, Sequence, Type, TypeVar
 
+from sqlalchemy.sql.elements import BinaryExpression
 from sqlmodel import select, SQLModel
 
 from database import init_session
@@ -42,4 +43,13 @@ class BaseDAO(Generic[T], ABC):
         async with init_session() as session:
             result = await session.get(cls.model, primary_key)
             await session.delete(result)
+            await session.commit()
+
+    @classmethod
+    async def delete_by_condition(cls, condition: BinaryExpression) -> None:
+        async with init_session() as session:
+            statement = select(cls.model).where(condition)
+            results = await session.exec(statement)
+            for row in results:
+                await session.delete(row)
             await session.commit()

@@ -1,5 +1,7 @@
 from datetime import datetime, UTC
+from typing import cast
 
+from sqlalchemy.sql.elements import BinaryExpression
 from sqlmodel import select
 
 from base_dao import BaseDAO
@@ -38,10 +40,6 @@ class IssuedTokensDAO(BaseDAO):
 
     @classmethod
     async def delete_expired(cls) -> None:
-        async with init_session() as session:
-            current_time = int(datetime.now(UTC).timestamp())
-            statement = select(cls.model).where(cls.model.exp < current_time)
-            expired_tokens = await session.exec(statement)
-            for token in expired_tokens:
-                await session.delete(token)
-            await session.commit()
+        current_time = int(datetime.now(UTC).timestamp())
+        condition = cast(BinaryExpression, cls.model.exp < current_time)
+        await cls.delete_by_condition(condition)
