@@ -15,3 +15,9 @@ def setup_periodic_tasks(sender: Celery, **kwargs: dict[str, Any]) -> None:
         sig=delete_expired_tokens.s(),
         schedule=timedelta(days=1)
     )
+
+    sender.add_periodic_task(
+        name='Clear the database of expired confirmation tokens',
+        sig=delete_expired_confirmation_tokens.s(),
+        schedule=timedelta(days=1)
+    )
