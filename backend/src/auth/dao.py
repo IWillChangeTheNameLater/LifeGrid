@@ -8,7 +8,11 @@ from base_dao import BaseDAO
 from database import init_session
 from exceptions import *
 
-from .models import IssuedRefreshTokens, RefreshTokenPayload
+from .models import (
+    IssuedConfirmationTokens,
+    IssuedRefreshTokens,
+    RefreshTokenPayload,
+)
 
 
 class IssuedTokensDAO(BaseDAO):
@@ -42,4 +46,23 @@ class IssuedTokensDAO(BaseDAO):
     async def delete_expired(cls) -> None:
         current_time = int(datetime.now(UTC).timestamp())
         condition = cast(BinaryExpression, cls.model.exp < current_time)
+        await cls.delete_by_condition(condition)
+
+
+class IssuedConfirmationTokensDAO(BaseDAO):
+    model = IssuedConfirmationTokens
+
+    @classmethod
+    async def issue_token(cls, user_id: str) -> str:
+        async with init_session() as session:
+            issued_token = cls.model(user_id=user_id)
+            token_id = issued_token.id
+            session.add(issued_token)
+            await session.commit()
+            return token_id
+
+    @classmethod
+    async def delete_expired(cls) -> None:
+        current_time = int(datetime.now(UTC).timestamp())
+        condition = cast(BinaryExpression, cls.model.expire_at < current_time)
         await cls.delete_by_condition(condition)
