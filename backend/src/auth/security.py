@@ -42,7 +42,7 @@ async def authenticate_user(email: EmailStr, password: str) -> Users|None:
     return None
 
 
-async def confirm_email(token_id: str) -> None:
+async def confirm_email_with_token(token_id: str) -> None:
     token = await IssuedConfirmationTokensDAO.extract_token(token_id)
     if token.expire_at < int(datetime.now(UTC).timestamp()):
         raise TokenExpiredException

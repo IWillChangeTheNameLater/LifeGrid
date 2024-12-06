@@ -69,12 +69,6 @@ class IssuedConfirmationTokensDAO(BaseDAO):
             return token_id
 
     @classmethod
-    async def delete_expired(cls) -> None:
-        current_time = int(datetime.now(UTC).timestamp())
-        condition = cast(BinaryExpression, cls.model.expire_at < current_time)
-        await cls.delete_by_condition(condition)
-
-    @classmethod
     async def extract_token(cls, token_id: str) -> IssuedConfirmationTokens:
         async with init_session() as session:
             if token := await session.get(cls.model, token_id):
@@ -83,3 +77,9 @@ class IssuedConfirmationTokensDAO(BaseDAO):
                 return token
             else:
                 raise TokenAbsentException
+
+    @classmethod
+    async def delete_expired(cls) -> None:
+        current_time = int(datetime.now(UTC).timestamp())
+        condition = cast(BinaryExpression, cls.model.expire_at < current_time)
+        await cls.delete_by_condition(condition)
