@@ -80,7 +80,9 @@ class IssuedConfirmationTokens(SQLModel, table=True):
     id: str = Field(
         default_factory=lambda: str(ULID()), primary_key=True, max_length=26
     )
-    user_id: str = Field(foreign_key='users.id', ondelete='CASCADE')
+    user_id: str = Field(
+        foreign_key='users.id', ondelete='CASCADE', unique=True
+    )
     expire_at: int = Field(
         default_factory=expiration_time_factory(
             settings.confirmation_token_exp_sec
