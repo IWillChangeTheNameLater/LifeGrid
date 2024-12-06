@@ -33,6 +33,7 @@ class _Settings(BaseSettings):
     token_crypt_algorithm: str = 'HS256'
     access_token_exp_sec: PositiveInt = 60*60
     refresh_token_exp_sec: PositiveInt = 60*60*24*30
+    confirmation_token_exp_sec: PositiveInt = 60*60*24*5
 
     redis_host: str = 'localhost'
     redis_port: PositiveInt = 6379

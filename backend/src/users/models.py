@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel
 from ulid import ULID
 
 if TYPE_CHECKING:
-    from auth.models import IssuedRefreshTokens
+    from auth.models import IssuedConfirmationTokens, IssuedRefreshTokens
 
 
 class BaseUser(SQLModel):
@@ -26,6 +26,13 @@ class Users(BaseUser, table=True):
         cascade_delete=True,
         sa_relationship_kwargs={'lazy': 'selectin'}
     )
+
+    issued_confirmation_tokens: list[
+        'IssuedConfirmationTokens'] = Relationship(
+            back_populates='user',
+            cascade_delete=True,
+            sa_relationship_kwargs={'lazy': 'selectin'}
+        )
 
 
 class UserRegister(BaseUser):
