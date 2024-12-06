@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Any, Generic, Sequence, Type, TypeVar
 
-from sqlalchemy.sql.elements import BinaryExpression
+from sqlalchemy.sql.elements import OperatorExpression
 from sqlmodel import select, SQLModel
 
 from database import init_session
@@ -46,7 +46,7 @@ class BaseDAO(Generic[T], ABC):
             await session.commit()
 
     @classmethod
-    async def delete_by_condition(cls, condition: BinaryExpression) -> None:
+    async def delete_by_condition(cls, condition: OperatorExpression) -> None:
         async with init_session() as session:
             statement = select(cls.model).where(condition)
             results = await session.exec(statement)
