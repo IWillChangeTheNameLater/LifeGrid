@@ -53,6 +53,11 @@ class IssuedConfirmationTokensDAO(BaseDAO):
     model = IssuedConfirmationTokens
 
     @classmethod
+    async def delete_user_tokens(cls, user_id: str) -> None:
+        condition = cast(BinaryExpression, cls.model.user_id == user_id)
+        await cls.delete_by_condition(condition)
+
+    @classmethod
     async def issue_token(cls, user_id: str) -> str:
         async with init_session() as session:
             issued_token = cls.model(user_id=user_id)
