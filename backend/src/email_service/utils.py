@@ -2,6 +2,7 @@ from email.message import EmailMessage
 from pathlib import Path
 from smtplib import SMTP_SSL
 import sys
+from typing import Iterable, Tuple
 
 from pydantic import ConfigDict, EmailStr, validate_call
 
@@ -41,3 +42,18 @@ def read_template(
         template_path = templates_dir_path/template_name
 
     return template_path.read_text()
+
+
+def format_template(
+    template: str,
+    substitutions: Iterable[Tuple[str, str]],
+    ignore_missed: bool = False,
+) -> str:
+    for s in substitutions:
+        if not ignore_missed and s[0] not in template:
+            raise ValueError(
+                f'The template does not contain the "{s[0]}" substring'
+            )
+        template = template.replace(s[0], s[1])
+
+    return template
