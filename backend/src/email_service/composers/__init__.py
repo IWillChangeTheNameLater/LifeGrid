@@ -1,1 +1,1 @@
-from . import email_confirmation
+from . import confirmation
