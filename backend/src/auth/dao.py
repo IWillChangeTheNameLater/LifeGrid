@@ -60,6 +60,8 @@ class IssuedConfirmationTokensDAO(BaseDAO):
     @classmethod
     async def issue_token(cls, user_id: str) -> str:
         async with init_session() as session:
+            await cls.delete_user_tokens(user_id)
+
             issued_token = cls.model(user_id=user_id)
             token_id = issued_token.id
             session.add(issued_token)
