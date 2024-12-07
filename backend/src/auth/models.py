@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, UTC
-from enum import Enum
+from enum import StrEnum
 from typing import Callable, TYPE_CHECKING
 
 from pydantic import EmailStr
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from users.models import Users
 
 
-class TokenFunction(str, Enum):
+class TokenFunction(StrEnum):
     REFRESH = 'refresh_token'
     ACCESS = 'access_token'
 
