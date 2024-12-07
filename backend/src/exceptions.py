@@ -24,6 +24,10 @@ class IncorrectEmailOrPasswordException(LifeGridException):
     detail = 'Incorrect email or password'
 
 
+class IncorrectPasswordException(IncorrectEmailOrPasswordException):
+    detail = 'Incorrect password'
+
+
 class EmailAlreadyVerified(LifeGridException):
     status_code = status.HTTP_409_CONFLICT
     detail = 'The email has already been verified'
