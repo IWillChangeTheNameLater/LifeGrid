@@ -77,6 +77,25 @@ async def logout(
     set_tokens_in_cookies(response, invalid_tokens)
 
 
+@router.patch('/change_password')
+async def change_password(
+    old_password: str,
+    new_password: str,
+    access_token_payload: access_payload_dependency,
+    session: session_dependency
+) -> None:
+    user = await UsersDAO.fetch_by_primary_key(access_token_payload.sub)
+
+    if not user:
+        raise UserIsNotPresentException
+    elif not security.verify_hashed_text(old_password, user.hashed_password):
+        raise IncorrectPasswordException
+
+    user.hashed_password = security.hash_text(new_password)
+    session.add(user)
+    await session.commit()
+
+
 @router.post('/request_confirmation_email')
 async def request_confirmation_email(
     request: Request, access_token_payload: access_payload_dependency
