@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request, Response
 
+from auth.dao import IssuedConfirmationTokensDAO
 from database import session_dependency
 from exceptions import *
+from task_queue.tasks import email_service as email_tasks
 from users.dao import UsersDAO
 from users.models import UserLogin, UserRegister, Users
 
 from . import security
 from .dao import IssuedTokensDAO
-from .dependencies import refresh_payload_dependency
+from .dependencies import access_payload_dependency, refresh_payload_dependency
 from .models import Tokens
 from .utils import give_user_tokens, set_tokens_in_cookies
 
@@ -75,6 +77,26 @@ async def logout(
     set_tokens_in_cookies(response, invalid_tokens)
 
 
-@router.post('/confirm_email')
+@router.post('/request_confirmation_email')
+async def request_confirmation_email(
+    request: Request, access_token_payload: access_payload_dependency
+) -> None:
+    if access_token_payload.email_verified:
+        raise EmailAlreadyVerified
+
+    token_id = await IssuedConfirmationTokensDAO.issue_token(
+        access_token_payload.sub
+    )
+
+    confirmation_link = str(
+        request.url_for(confirm_email.__name__, confirmation_token=token_id)
+    )
+
+    email_tasks.request_confirmation_email.delay(
+        access_token_payload.email, confirmation_link
+    )
+
+
+@router.get('/confirm_email/{confirmation_token}')
 async def confirm_email(confirmation_token: str) -> None:
     await confirm_email(confirmation_token)
