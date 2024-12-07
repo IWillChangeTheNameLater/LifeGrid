@@ -43,5 +43,9 @@ class _Settings(BaseSettings):
     smtp_user: EmailStr = 'user@example.com'
     smtp_pass: str = 'SMTP password'
 
+    @property
+    def email_templates_dir_path(self) -> Path:
+        return Path(__file__).parent/'email_service'/'templates'
+
 
 settings = _Settings()
