@@ -8,6 +8,7 @@ from config import RedisDB, settings
 @unique
 class CeleryQueue(StrEnum):
     LOW_PRIORITY = 'low_priority'
+    MIDDLE_PRIORITY = 'middle_priority'
     HIGH_PRIORITY = 'high_priority'
 
     DEFAULT = 'default'
