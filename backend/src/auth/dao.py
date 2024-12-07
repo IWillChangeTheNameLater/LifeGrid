@@ -1,12 +1,18 @@
 from datetime import datetime, UTC
+from typing import cast
 
+from sqlalchemy.sql.elements import BinaryExpression
 from sqlmodel import select
 
 from base_dao import BaseDAO
 from database import init_session
 from exceptions import *
 
-from .models import IssuedRefreshTokens, RefreshTokenPayload
+from .models import (
+    IssuedConfirmationTokens,
+    IssuedRefreshTokens,
+    RefreshTokenPayload,
+)
 
 
 class IssuedTokensDAO(BaseDAO):
@@ -38,10 +44,42 @@ class IssuedTokensDAO(BaseDAO):
 
     @classmethod
     async def delete_expired(cls) -> None:
+        current_time = int(datetime.now(UTC).timestamp())
+        condition = cast(BinaryExpression, cls.model.exp < current_time)
+        await cls.delete_by_condition(condition)
+
+
+class IssuedConfirmationTokensDAO(BaseDAO):
+    model = IssuedConfirmationTokens
+
+    @classmethod
+    async def delete_user_tokens(cls, user_id: str) -> None:
+        condition = cast(BinaryExpression, cls.model.user_id == user_id)
+        await cls.delete_by_condition(condition)
+
+    @classmethod
+    async def issue_token(cls, user_id: str) -> str:
         async with init_session() as session:
-            current_time = int(datetime.now(UTC).timestamp())
-            statement = select(cls.model).where(cls.model.exp < current_time)
-            expired_tokens = await session.exec(statement)
-            for token in expired_tokens:
-                await session.delete(token)
+            await cls.delete_user_tokens(user_id)
+
+            issued_token = cls.model(user_id=user_id)
+            token_id = issued_token.id
+            session.add(issued_token)
             await session.commit()
+            return token_id
+
+    @classmethod
+    async def extract_token(cls, token_id: str) -> IssuedConfirmationTokens:
+        async with init_session() as session:
+            if token := await session.get(cls.model, token_id):
+                await session.delete(token)
+                await session.commit()
+                return token
+            else:
+                raise TokenAbsentException
+
+    @classmethod
+    async def delete_expired(cls) -> None:
+        current_time = int(datetime.now(UTC).timestamp())
+        condition = cast(BinaryExpression, cls.model.expire_at < current_time)
+        await cls.delete_by_condition(condition)

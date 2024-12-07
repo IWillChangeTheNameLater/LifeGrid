@@ -1,10 +1,14 @@
+from datetime import datetime, UTC
+
 import bcrypt, jwt
 from pydantic import EmailStr
 
 from config import settings
+from exceptions import *
 from users.dao import UsersDAO
 from users.models import Users
 
+from .dao import IssuedConfirmationTokensDAO
 from .models import AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload
 
 
@@ -36,3 +40,11 @@ async def authenticate_user(email: EmailStr, password: str) -> Users|None:
     if user and verify_hashed_text(password, user.hashed_password):
         return user
     return None
+
+
+async def confirm_email(token_id: str) -> None:
+    token = await IssuedConfirmationTokensDAO.extract_token(token_id)
+    if token.expire_at < int(datetime.now(UTC).timestamp()):
+        raise TokenExpiredException
+
+    await UsersDAO.verify_email(token.user_id)

@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, UTC
-from enum import Enum
+from enum import StrEnum
 from typing import Callable, TYPE_CHECKING
 
 from pydantic import EmailStr
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from users.models import Users
 
 
-class TokenFunction(str, Enum):
+class TokenFunction(StrEnum):
     REFRESH = 'refresh_token'
     ACCESS = 'access_token'
 
@@ -71,5 +71,24 @@ class IssuedRefreshTokens(SQLModel, table=True):
 
     user: 'Users' = Relationship(
         back_populates='issued_refresh_tokens',
+        sa_relationship_kwargs={'lazy': 'selectin'}
+    )
+
+
+class IssuedConfirmationTokens(SQLModel, table=True):
+    __tablename__ = 'issued_confirmation_tokens'
+    id: str = Field(
+        default_factory=lambda: str(ULID()), primary_key=True, max_length=26
+    )
+    user_id: str = Field(
+        foreign_key='users.id', ondelete='CASCADE', unique=True
+    )
+    expire_at: int = Field(
+        default_factory=expiration_time_factory(
+            settings.confirmation_token_exp_sec
+        )
+    )
+    user: 'Users' = Relationship(
+        back_populates='issued_confirmation_tokens',
         sa_relationship_kwargs={'lazy': 'selectin'}
     )

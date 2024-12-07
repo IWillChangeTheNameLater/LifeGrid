@@ -14,7 +14,8 @@ class RedisDB(IntEnum):
 class _Settings(BaseSettings):
     model_config = SettingsConfigDict(
         # Search for .env in the parent directory
-        env_file=Path(__file__).parent.parent/'.env'
+        env_file=Path(__file__).parent.parent/'.env',
+        frozen=True
     )
 
     db_host: str = 'localhost'
@@ -32,6 +33,7 @@ class _Settings(BaseSettings):
     token_crypt_algorithm: str = 'HS256'
     access_token_exp_sec: PositiveInt = 60*60
     refresh_token_exp_sec: PositiveInt = 60*60*24*30
+    confirmation_token_exp_sec: PositiveInt = 60*60*24*5
 
     redis_host: str = 'localhost'
     redis_port: PositiveInt = 6379
@@ -40,6 +42,10 @@ class _Settings(BaseSettings):
     smtp_port: PositiveInt = 465
     smtp_user: EmailStr = 'user@example.com'
     smtp_pass: str = 'SMTP password'
+
+    @property
+    def email_templates_dir_path(self) -> Path:
+        return Path(__file__).parent/'email_service'/'templates'
 
 
 settings = _Settings()
