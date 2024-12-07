@@ -99,4 +99,4 @@ async def request_confirmation_email(
 
 @router.get('/confirm_email/{confirmation_token}')
 async def confirm_email(confirmation_token: str) -> None:
-    await confirm_email(confirmation_token)
+    await security.confirm_email(confirmation_token)
