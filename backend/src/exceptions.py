@@ -24,6 +24,11 @@ class IncorrectEmailOrPasswordException(LifeGridException):
     detail = 'Incorrect email or password'
 
 
+class EmailAlreadyVerified(LifeGridException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'The email has already been verified'
+
+
 class TokenExpiredException(LifeGridException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Token has expired'
