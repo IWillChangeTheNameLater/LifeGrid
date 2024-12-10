@@ -30,7 +30,7 @@ def send_email(
 
 def read_template(
     template_name: str|Path,
-    templates_dir_path: str|Path = settings.email_templates_dir_path
+    templates_dir_path: str|Path = Path(__file__).parent/'templates'
 ) -> str:
     templates_dir_path = Path(templates_dir_path)
     template_path = Path(template_name)

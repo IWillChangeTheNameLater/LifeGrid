@@ -1,9 +1,8 @@
 import sys
-from pathlib import Path
 
 
-parent_dir = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(parent_dir))
+from common.config import settings
+sys.path.insert(0, str(settings.working_dir_path))
 
 from logging.config import fileConfig
 
@@ -11,7 +10,6 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from common.config import settings
 from users.models import Users  # noqa
 from auth.models import IssuedRefreshTokens  # noqa
 
