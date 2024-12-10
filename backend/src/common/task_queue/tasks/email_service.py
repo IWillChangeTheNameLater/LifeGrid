@@ -3,8 +3,8 @@ import asyncio
 from celery import shared_task
 from pydantic import EmailStr
 
-from common.email_service import send_email
-from common.email_service.composers.confirmation import confirmation_email
+from common.emails import send_email
+from common.emails.composers.confirmation import confirmation_email
 from common.task_queue.celery_config import CeleryQueue
 
 

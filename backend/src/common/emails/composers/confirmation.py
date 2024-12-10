@@ -1,6 +1,6 @@
 from email.message import EmailMessage
 
-from ..utils import format_template, read_template
+from ..service import format_template, read_template
 
 
 def confirmation_email(confirmation_link: str) -> EmailMessage:
