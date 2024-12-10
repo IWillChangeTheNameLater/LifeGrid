@@ -157,3 +157,6 @@ cython_debug/
 
 # Alembic
 **/migrations/versions/*.py
+
+# Isort
+*.py.isorted
