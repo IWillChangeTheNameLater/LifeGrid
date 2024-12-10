@@ -1,7 +1,7 @@
 import sys
 
 
-from common.config import settings
+from src.common.config import settings # noqa
 sys.path.insert(0, str(settings.working_dir_path))
 
 from logging.config import fileConfig
@@ -10,8 +10,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from users.models import Users  # noqa
-from auth.models import IssuedRefreshTokens  # noqa
+from domains.users import models  # noqa
+from domains.auth import models  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
