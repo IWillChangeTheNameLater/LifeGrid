@@ -4,7 +4,7 @@ from typing import Any, Generic, Sequence, Type, TypeVar
 from sqlalchemy.sql.elements import OperatorExpression
 from sqlmodel import select, SQLModel
 
-from database import init_session
+from common.database import init_session
 
 
 T = TypeVar('T', bound=SQLModel)

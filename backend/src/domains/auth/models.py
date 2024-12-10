@@ -6,10 +6,10 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 from ulid import ULID
 
-from config import settings
+from common.config import settings
 
 if TYPE_CHECKING:
-    from users.models import Users
+    from domains.users.models import Users
 
 
 class TokenFunction(StrEnum):

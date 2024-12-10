@@ -11,9 +11,9 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from auth.models import IssuedRefreshTokens
-from config import settings
-from users.models import Users
+from common.config import settings
+from users.models import Users  # noqa
+from auth.models import IssuedRefreshTokens  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

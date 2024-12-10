@@ -2,8 +2,8 @@ import asyncio
 
 from celery import shared_task
 
-from auth.dao import IssuedConfirmationTokensDAO, IssuedTokensDAO
-from task_queue.celery_config import CeleryQueue
+from common.task_queue.celery_config import CeleryQueue
+from domains.auth.dao import IssuedConfirmationTokensDAO, IssuedTokensDAO
 
 
 event_loop = asyncio.get_event_loop()

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request, Response
 
-from auth.dao import IssuedConfirmationTokensDAO
-from database import session_dependency
-from exceptions import *
-from task_queue.tasks import email_service as email_tasks
-from users.dao import UsersDAO
-from users.models import UserLogin, UserRegister, Users
+from common.database import session_dependency
+from common.exceptions import *
+from common.task_queue.tasks import email_service as email_tasks
+from domains.auth.dao import IssuedConfirmationTokensDAO
+from domains.users.dao import UsersDAO
+from domains.users.models import UserLogin, UserRegister, Users
 
 from . import security
 from .dao import IssuedTokensDAO

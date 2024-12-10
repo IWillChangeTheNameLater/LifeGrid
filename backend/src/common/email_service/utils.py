@@ -5,7 +5,7 @@ from typing import Iterable, Tuple
 
 from pydantic import ConfigDict, EmailStr, validate_call
 
-from config import settings
+from common.config import settings
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))

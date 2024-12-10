@@ -3,10 +3,10 @@ from datetime import datetime, UTC
 import bcrypt, jwt
 from pydantic import EmailStr
 
-from config import settings
-from exceptions import *
-from users.dao import UsersDAO
-from users.models import Users
+from common.config import settings
+from common.exceptions import *
+from domains.users.dao import UsersDAO
+from domains.users.models import Users
 
 from .dao import IssuedConfirmationTokensDAO
 from .models import AccessTokenPayload, BaseTokenPayload, RefreshTokenPayload

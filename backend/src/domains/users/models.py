@@ -5,7 +5,10 @@ from sqlmodel import Field, Relationship, SQLModel
 from ulid import ULID
 
 if TYPE_CHECKING:
-    from auth.models import IssuedConfirmationTokens, IssuedRefreshTokens
+    from domains.auth.models import (
+        IssuedConfirmationTokens,
+        IssuedRefreshTokens,
+    )
 
 
 class BaseUser(SQLModel):

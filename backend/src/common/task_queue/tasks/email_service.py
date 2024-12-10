@@ -2,9 +2,9 @@ import asyncio
 
 from celery import shared_task
 
-from email_service import send_email
-from email_service.composers.confirmation import confirmation_email
-from task_queue.celery_config import CeleryQueue
+from common.email_service import send_email
+from common.email_service.composers.confirmation import confirmation_email
+from common.task_queue.celery_config import CeleryQueue
 
 
 event_loop = asyncio.get_event_loop()
