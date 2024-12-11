@@ -16,8 +16,8 @@ class CeleryQueue(StrEnum):
 
 # The Celery app config
 imports = ('common.task_queue.scheduler', 'common.task_queue.tasks')
-broker_url = f'redis://{settings.redis_host}:{settings.redis_port}/{RedisDB.MESSAGE_BROKER.value}'
-result_backend = f'redis://{settings.redis_host}:{settings.redis_port}/{RedisDB.RESULT_BACKEND.value}'
+broker_url = settings.get_redis_dsn(RedisDB.MESSAGE_BROKER)
+result_backend = settings.get_redis_dsn(RedisDB.RESULT_BACKEND)
 
 # Misc config
 task_create_missing_queues = False

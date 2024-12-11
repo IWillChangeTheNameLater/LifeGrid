@@ -57,6 +57,9 @@ class _Settings(BaseSettings):
     redis_host: str = 'localhost'
     redis_port: PositiveInt = 6379
 
+    def get_redis_dsn(self, logical_db: RedisDB) -> str:
+        return f'redis://{self.redis_host}:{self.redis_port}/{logical_db}'
+
     smtp_host: str = 'smtp.gmail.com'
     smtp_port: PositiveInt = 465
     smtp_user: EmailStr = 'user@example.com'
