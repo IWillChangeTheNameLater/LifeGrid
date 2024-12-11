@@ -3,7 +3,7 @@ from datetime import datetime, UTC
 import bcrypt, jwt
 from pydantic import EmailStr
 
-from common.config import settings
+from common import settings
 from common.exceptions import *
 from domains.users.dao import UsersDAO
 from domains.users.models import Users

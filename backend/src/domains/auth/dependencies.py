@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 import jwt
 
-from common.config import settings
+from common import settings
 from common.exceptions import *
 
 from .models import AccessTokenPayload, RefreshTokenPayload, TokenFunction
