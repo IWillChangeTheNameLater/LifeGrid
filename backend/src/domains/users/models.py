@@ -2,7 +2,8 @@ from typing import TYPE_CHECKING
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
-from ulid import ULID
+
+from common.models import ULIDField, ULIDStr
 
 if TYPE_CHECKING:
     from domains.auth.models import (
@@ -16,10 +17,7 @@ class BaseUser(SQLModel):
 
 
 class Users(BaseUser, table=True):
-    id: str = Field(
-        default_factory=lambda: str(ULID()), primary_key=True, max_length=26
-    )
-
+    id: ULIDStr = ULIDField(primary_key=True)
     email: EmailStr = Field(index=True)
     is_email_verified: bool = False
     hashed_password: str
@@ -29,7 +27,6 @@ class Users(BaseUser, table=True):
         cascade_delete=True,
         sa_relationship_kwargs={'lazy': 'selectin'}
     )
-
     issued_confirmation_tokens: list[
         'IssuedConfirmationTokens'] = Relationship(
             back_populates='user',
