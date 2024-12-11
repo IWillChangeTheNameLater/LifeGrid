@@ -11,3 +11,4 @@ python-ulid[pydantic]
 redis~=5.2.0
 celery~=5.4.0
 flower~=2.0.1
+fastapi-cache2~=0.2.2
