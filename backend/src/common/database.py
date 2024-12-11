@@ -7,7 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from common.config import settings
 
 
-_engine = create_async_engine(settings.db_dsn)
+_engine = create_async_engine(settings.postgresql_dsn)
 
 init_session = async_sessionmaker(_engine, class_=AsyncSession)
 

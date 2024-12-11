@@ -44,7 +44,7 @@ class _Settings(BaseSettings):
     db_name: str = 'postgres'
 
     @property
-    def db_dsn(self) -> str:
+    def postgresql_dsn(self) -> str:
         return f'postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}'
 
     refresh_token_key: str = 'Secret key for the refresh token'
