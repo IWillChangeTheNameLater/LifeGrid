@@ -22,9 +22,13 @@ def _find_relative_dir(
 
 
 @unique
-class RedisDB(IntEnum):
-    RESULT_BACKEND = 0
-    MESSAGE_BROKER = 1
+class RedisLogicalDB(IntEnum):
+    DEFAULT = 0
+
+    CACHE = 1
+
+    MESSAGE_BROKER = 2
+    RESULT_BACKEND = 3
 
 
 class _Settings(BaseSettings):
@@ -57,7 +61,9 @@ class _Settings(BaseSettings):
     redis_host: str = 'localhost'
     redis_port: PositiveInt = 6379
 
-    def get_redis_dsn(self, logical_db: RedisDB) -> str:
+    def get_redis_dsn(
+        self, logical_db: RedisLogicalDB = RedisLogicalDB.DEFAULT
+    ) -> str:
         return f'redis://{self.redis_host}:{self.redis_port}/{logical_db}'
 
     smtp_host: str = 'smtp.gmail.com'
