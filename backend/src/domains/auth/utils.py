@@ -1,6 +1,6 @@
 from fastapi import Response
 
-from users.models import Users
+from domains.users.models import Users
 
 from .dao import IssuedTokensDAO
 from .dependencies import _get_refresh_token_payload

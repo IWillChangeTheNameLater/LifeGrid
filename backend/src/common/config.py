@@ -5,6 +5,22 @@ from pydantic import EmailStr, PositiveInt
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _find_relative_dir(
+    dir_name: str, start_dir_path: Path|str = __file__
+) -> Path:
+    start_dir_path = Path(start_dir_path)
+
+    for parent in start_dir_path.parents:
+        if parent.name == dir_name:
+            return parent
+
+    for child in start_dir_path.rglob('*'):
+        if child.name == dir_name and child.is_dir():
+            return child
+
+    raise ValueError('No parent or child directory found')
+
+
 @unique
 class RedisDB(IntEnum):
     RESULT_BACKEND = 0
@@ -12,9 +28,12 @@ class RedisDB(IntEnum):
 
 
 class _Settings(BaseSettings):
+    root_dir_path: Path = _find_relative_dir('backend')
+    working_dir_path: Path = _find_relative_dir('src')
+
     model_config = SettingsConfigDict(
         # Search for .env in the parent directory
-        env_file=Path(__file__).parent.parent/'.env',
+        env_file=root_dir_path/'.env',
         frozen=True
     )
 
@@ -42,10 +61,6 @@ class _Settings(BaseSettings):
     smtp_port: PositiveInt = 465
     smtp_user: EmailStr = 'user@example.com'
     smtp_pass: str = 'SMTP password'
-
-    @property
-    def email_templates_dir_path(self) -> Path:
-        return Path(__file__).parent/'email_service'/'templates'
 
 
 settings = _Settings()

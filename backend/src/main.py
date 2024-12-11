@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 import uvicorn
 
-from auth.router import router as router_auth
-from task_queue import celery_app
+from common.task_queue import celery_app
+from domains.auth.router import router as router_auth
 
 # To ensure that the import will not be removed due to uselessness
 celery_app = celery_app

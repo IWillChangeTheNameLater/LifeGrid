@@ -1,9 +1,9 @@
 from pydantic import EmailStr
 from sqlmodel import select
 
-from base_dao import BaseDAO
-from database import init_session
-from exceptions import *
+from common.base_dao import BaseDAO
+from common.database import init_session
+from common.exceptions import *
 
 from .models import Users
 

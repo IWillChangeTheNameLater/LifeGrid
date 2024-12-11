@@ -2,7 +2,7 @@ from enum import StrEnum, unique
 
 from kombu import Queue
 
-from config import RedisDB, settings
+from common.config import RedisDB, settings
 
 
 @unique
@@ -15,7 +15,7 @@ class CeleryQueue(StrEnum):
 
 
 # The Celery app config
-imports = ('task_queue.scheduler', 'task_queue.tasks')
+imports = ('common.task_queue.scheduler', 'common.task_queue.tasks')
 broker_url = f'redis://{settings.redis_host}:{settings.redis_port}/{RedisDB.MESSAGE_BROKER.value}'
 result_backend = f'redis://{settings.redis_host}:{settings.redis_port}/{RedisDB.RESULT_BACKEND.value}'
 
