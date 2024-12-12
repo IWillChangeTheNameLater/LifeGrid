@@ -17,7 +17,7 @@ from domains.auth import models  # noqa
 # access to the values within the .ini file in use.
 config = context.config
 config.set_main_option(
-    'sqlalchemy.url', f'{settings.postgresql_dsn}?async_fallback=True'
+    'sqlalchemy.url', f'{settings.postgres_dsn}?async_fallback=True'
 )
 
 # Interpret the config file for Python logging.

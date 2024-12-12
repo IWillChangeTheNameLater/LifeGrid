@@ -41,15 +41,15 @@ class _Settings(BaseSettings):
         frozen=True
     )
 
-    db_host: str = 'localhost'
-    db_port: PositiveInt = 5432
-    db_user: str = 'postgres'
-    db_pass: str = 'postgres'
-    db_name: str = 'postgres'
+    postgres_host: str = 'localhost'
+    postgres_port: PositiveInt = 5432
+    postgres_user: str = 'postgres'
+    postgres_password: str = 'postgres'
+    postgres_db: str = 'postgres'
 
     @property
-    def postgresql_dsn(self) -> str:
-        return f'postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}'
+    def postgres_dsn(self) -> str:
+        return f'postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}'
 
     refresh_token_key: str = 'Secret key for the refresh token'
     access_token_key: str = 'Secret key for the access token'
