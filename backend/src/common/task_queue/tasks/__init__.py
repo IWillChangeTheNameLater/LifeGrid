@@ -1,2 +1,1 @@
-from .email_service import *
-from .scheduled import *
+from . import email_service, scheduled

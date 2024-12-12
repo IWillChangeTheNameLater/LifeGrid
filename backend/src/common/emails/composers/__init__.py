@@ -1,1 +1,1 @@
-from .confirmation import *
+from . import confirmation

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Response
 
-from common import session_dependency
+from common.database import session_dependency
 from common.exceptions import *
 from common.task_queue.tasks import email_service as email_tasks
 from domains.auth.dao import IssuedConfirmationTokensDAO

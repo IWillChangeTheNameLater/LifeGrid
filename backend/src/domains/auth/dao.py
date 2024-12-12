@@ -4,7 +4,8 @@ from typing import cast
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlmodel import select
 
-from common import BaseDAO, init_session
+from common.base_dao import BaseDAO
+from common.database import init_session
 from common.exceptions import *
 
 from .models import (

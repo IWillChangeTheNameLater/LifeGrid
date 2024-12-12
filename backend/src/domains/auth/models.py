@@ -5,7 +5,8 @@ from typing import Callable, TYPE_CHECKING
 from pydantic import EmailStr, PositiveInt
 from sqlmodel import Field, Relationship, SQLModel
 
-from common import settings, ULIDField, ULIDStr
+from common.config import settings
+from common.models import ULIDField, ULIDStr
 
 if TYPE_CHECKING:
     from domains.users.models import Users

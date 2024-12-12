@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
-from common import ULIDField, ULIDStr
+from common.models import ULIDField, ULIDStr
 
 if TYPE_CHECKING:
     from domains.auth.models import (
