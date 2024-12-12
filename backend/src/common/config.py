@@ -41,7 +41,7 @@ class _Settings(BaseSettings):
         frozen=True
     )
 
-    postgres_host: str = 'localhost'
+    postgres_host: str = 'postgres'
     postgres_port: PositiveInt = 5432
     postgres_user: str = 'postgres'
     postgres_password: str = 'postgres'
@@ -58,7 +58,7 @@ class _Settings(BaseSettings):
     refresh_token_exp_sec: PositiveInt = 60*60*24*30
     confirmation_token_exp_sec: PositiveInt = 60*60*24*5
 
-    redis_host: str = 'localhost'
+    redis_host: str = 'redis'
     redis_port: PositiveInt = 6379
 
     def get_redis_dsn(
