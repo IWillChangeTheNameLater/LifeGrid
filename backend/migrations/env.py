@@ -1,9 +1,11 @@
 import sys
 
+from pathlib import Path
 
-from src.common.config import settings # noqa
-sys.path.insert(0, str(settings.working_dir_path))
+working_dir_path = Path(__file__).parent.parent/'src'
+sys.path.insert(0, str(working_dir_path))
 
+from common.config import settings
 from logging.config import fileConfig
 
 from alembic import context
