@@ -1,7 +1,5 @@
 import sys
-
 from pathlib import Path
-
 working_dir_path = Path(__file__).parent.parent/'src'
 sys.path.insert(0, str(working_dir_path))
 
