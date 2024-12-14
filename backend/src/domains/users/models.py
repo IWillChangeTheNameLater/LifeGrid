@@ -2,7 +2,7 @@ from datetime import date
 from enum import StrEnum
 from typing import Annotated, TYPE_CHECKING
 
-from pydantic import EmailStr, StringConstraints
+from pydantic import EmailStr, PositiveInt, StringConstraints
 from sqlmodel import Field, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
@@ -28,7 +28,7 @@ class Users(BaseUser, table=True):
     is_email_verified: bool = False
     hashed_password: str
     birthday: date
-    days_at_death: int = Field(ge=1)
+    days_at_death: PositiveInt
 
     issued_refresh_tokens: list['IssuedRefreshTokens'] = Relationship(
         back_populates='user',
@@ -55,7 +55,7 @@ class UserRegister(BaseUser):
     email: EmailStr
     password: PasswordStr
     birthday: date
-    days_at_death: int = Field(ge=1)
+    days_at_death: PositiveInt
 
 
 class UserLogin(BaseUser):
