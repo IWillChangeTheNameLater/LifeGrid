@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, UTC
 from enum import StrEnum
-from typing import Callable, TYPE_CHECKING
+from typing import Annotated, Callable, TYPE_CHECKING
 
-from pydantic import EmailStr, PositiveInt
+from pydantic import EmailStr, PositiveInt, StringConstraints
 from sqlmodel import Field, Relationship, SQLModel
 
 from common.config import settings
@@ -10,6 +10,11 @@ from common.models import ULIDField, ULIDStr
 
 if TYPE_CHECKING:
     from domains.users.models import Users
+
+
+DeviceStr = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, to_lower=True, max_length=255)]
 
 
 class TokenFunction(StrEnum):
@@ -51,7 +56,7 @@ class RefreshTokenPayload(BaseTokenPayload):
     exp: PositiveInt = Field(
         default_factory=exp_time_factory(settings.refresh_token_exp_sec)
     )
-    device_id: str
+    device_id: DeviceStr
 
 
 class IssuedRefreshTokens(SQLModel, table=True):
@@ -61,9 +66,9 @@ class IssuedRefreshTokens(SQLModel, table=True):
     sub: ULIDStr = Field(
         foreign_key='users.id', ondelete='CASCADE', index=True
     )
-    device_id: str = Field(index=True)
+    device_id: DeviceStr = Field(index=True)
     exp: PositiveInt
-    is_revoked: bool = Field(default=False)
+    is_revoked: bool = False
 
     user: 'Users' = Relationship(
         back_populates='issued_refresh_tokens',

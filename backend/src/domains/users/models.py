@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import Annotated, TYPE_CHECKING
 
-from pydantic import EmailStr
+from pydantic import EmailStr, StringConstraints
 from sqlmodel import Field, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
@@ -12,13 +12,17 @@ if TYPE_CHECKING:
     )
 
 
+PasswordStr = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=8, max_length=64)]
+
+
 class BaseUser(SQLModel):
     ...
 
 
 class Users(BaseUser, table=True):
     id: ULIDStr = ULIDField(primary_key=True)
-    email: EmailStr = Field(index=True)
+    email: EmailStr = Field(index=True, max_length=254)
     is_email_verified: bool = False
     hashed_password: str
 
@@ -37,9 +41,9 @@ class Users(BaseUser, table=True):
 
 class UserRegister(BaseUser):
     email: EmailStr
-    password: str
+    password: PasswordStr
 
 
 class UserLogin(BaseUser):
     email: EmailStr
-    password: str
+    password: PasswordStr
