@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, UTC
+from datetime import date, datetime, timedelta, UTC
 from enum import StrEnum
 from typing import Annotated, Callable, TYPE_CHECKING
 
@@ -46,6 +46,9 @@ def exp_time_factory(seconds_to_live: int) -> Callable[[], int]:
 class AccessTokenPayload(BaseTokenPayload):
     email: EmailStr
     email_verified: bool
+    birthday: date
+    days_at_death: PositiveInt
+
     exp: PositiveInt = Field(
         default_factory=exp_time_factory(settings.access_token_exp_sec)
     )

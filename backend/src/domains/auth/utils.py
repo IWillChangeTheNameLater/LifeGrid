@@ -21,7 +21,9 @@ def create_tokens_from_user(user: Users, device_id: str) -> Tokens:
         AccessTokenPayload(
             sub=user.id,
             email=user.email,
-            email_verified=user.is_email_verified
+            email_verified=user.is_email_verified,
+            birthday=user.birthday,
+            days_at_death=user.days_at_death
         )
     )
     refresh_token = create_refresh_token(
