@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Annotated, TYPE_CHECKING
 
 from pydantic import EmailStr, StringConstraints
@@ -25,6 +26,8 @@ class Users(BaseUser, table=True):
     email: EmailStr = Field(index=True, max_length=254)
     is_email_verified: bool = False
     hashed_password: str
+    birthday: date
+    days_at_death: int = Field(ge=1)
 
     issued_refresh_tokens: list['IssuedRefreshTokens'] = Relationship(
         back_populates='user',
@@ -38,12 +41,25 @@ class Users(BaseUser, table=True):
             sa_relationship_kwargs={'lazy': 'selectin'}
         )
 
+    user_settings: 'UserSettings' = Relationship(
+        back_populates='id', sa_relationship_kwargs={'uselist': False}
+    )
+
 
 class UserRegister(BaseUser):
     email: EmailStr
     password: PasswordStr
+    birthday: date
+    days_at_death: int = Field(ge=1)
 
 
 class UserLogin(BaseUser):
     email: EmailStr
     password: PasswordStr
+
+
+class UserSettings(BaseUser, table=True):
+    __tablename__ = 'user_settings'
+    id: ULIDStr = ULIDField(primary_key=True)
+
+    user: Users = Relationship(back_populates='user_settings')
