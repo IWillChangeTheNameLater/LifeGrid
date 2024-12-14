@@ -1,4 +1,5 @@
 from datetime import date
+from enum import StrEnum
 from typing import Annotated, TYPE_CHECKING
 
 from pydantic import EmailStr, StringConstraints
@@ -42,7 +43,11 @@ class Users(BaseUser, table=True):
         )
 
     user_settings: 'UserSettings' = Relationship(
-        back_populates='id', sa_relationship_kwargs={'uselist': False}
+        back_populates='id',
+        cascade_delete=True,
+        sa_relationship_kwargs={
+            'lazy': 'selectin', 'uselist': False
+        }
     )
 
 
@@ -58,8 +63,21 @@ class UserLogin(BaseUser):
     password: PasswordStr
 
 
+class Theme(StrEnum):
+    LIGHT = 'light'
+    DARK = 'dark'
+
+
 class UserSettings(BaseUser, table=True):
     __tablename__ = 'user_settings'
-    id: ULIDStr = ULIDField(primary_key=True)
 
-    user: Users = Relationship(back_populates='user_settings')
+    id: ULIDStr = ULIDField(primary_key=True)
+    accent_color: str|None = Field(min_length=3, max_length=6)
+    theme: Theme|None
+
+    user: Users = Relationship(
+        back_populates='user_settings',
+        sa_relationship_kwargs={
+            'lazy': 'selectin', 'uselist': False
+        }
+    )
