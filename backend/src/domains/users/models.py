@@ -68,12 +68,15 @@ class Theme(StrEnum):
     DARK = 'dark'
 
 
-class UserSettings(BaseUser, table=True):
-    __tablename__ = 'user_settings'
-
-    id: ULIDStr = ULIDField(primary_key=True)
+class UserSettings(BaseUser):
     accent_color: str|None = Field(min_length=3, max_length=6)
     theme: Theme|None
+
+
+class UsersSettings(UserSettings, table=True):
+    __tablename__ = 'users_settings'
+
+    id: ULIDStr = ULIDField(primary_key=True)
 
     user: Users = Relationship(
         back_populates='user_settings',
