@@ -6,12 +6,13 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
 
+from .settings.models import UsersSettings
+
 if TYPE_CHECKING:
     from domains.auth.models import (
         IssuedConfirmationTokens,
         IssuedRefreshTokens,
     )
-    from domains.users.settings.models import UsersSettings
 
 
 PasswordStr = Annotated[
@@ -42,11 +43,11 @@ class Users(BaseUser, table=True):
             sa_relationship_kwargs={'lazy': 'selectin'}
         )
 
-    user_settings: 'UsersSettings' = Relationship(
-        back_populates='id',
+    user_settings: list['UsersSettings'] = Relationship(
+        back_populates='user',
         cascade_delete=True,
         sa_relationship_kwargs={
-            'lazy': 'selectin', 'uselist': False
+            'lazy': 'selectin'  #, 'uselist': False
         }
     )
 
