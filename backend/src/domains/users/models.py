@@ -7,6 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel
 from common.models import ULIDField, ULIDStr
 
 from .settings.models import UsersSettings
+from .user_profile import UserProfile
 
 if TYPE_CHECKING:
     from domains.auth.models import (
@@ -30,6 +31,7 @@ class Users(BaseUser, table=True):
     hashed_password: str
     birthday: date
     days_at_death: PositiveInt
+    profile: UserProfile|None = None
 
     issued_refresh_tokens: list['IssuedRefreshTokens'] = Relationship(
         back_populates='user',
