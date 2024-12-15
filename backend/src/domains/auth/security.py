@@ -22,7 +22,7 @@ def verify_hashed_text(text: str, hashed_text: str) -> bool:
 
 def _create_token(payload: BaseTokenPayload, key: str) -> str:
     encoded_token = jwt.encode(
-        payload.model_dump(), key, settings.token_crypt_algorithm
+        payload.model_dump(mode='json'), key, settings.token_crypt_algorithm
     )
     return encoded_token
 
