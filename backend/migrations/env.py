@@ -13,13 +13,12 @@ from sqlmodel import SQLModel
 
 from domains.users import models  # noqa
 from domains.auth import models  # noqa
-# from domains.remove import models  # noqa
-# import alembic_postgresql_enum
-# alembic_postgresql_enum.set_configuration(
-#     alembic_postgresql_enum.Config(
-#         add_type_ignore=True,
-#     )
-# )
+import alembic_postgresql_enum
+alembic_postgresql_enum.set_configuration(
+    alembic_postgresql_enum.Config(
+        add_type_ignore=True,
+    )
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
