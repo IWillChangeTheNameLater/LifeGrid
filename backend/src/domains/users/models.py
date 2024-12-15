@@ -42,12 +42,11 @@ class Users(BaseUser, table=True):
             cascade_delete=True,
             sa_relationship_kwargs={'lazy': 'selectin'}
         )
-
-    user_settings: list['UsersSettings'] = Relationship(
+    user_settings: 'UsersSettings' = Relationship(
         back_populates='user',
         cascade_delete=True,
         sa_relationship_kwargs={
-            'lazy': 'selectin'  #, 'uselist': False
+            'lazy': 'selectin', 'uselist': False
         }
     )
 
