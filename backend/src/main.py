@@ -9,6 +9,7 @@ import uvicorn
 
 from common.config import RedisLogicalDB, settings
 from domains.auth.router import router as router_auth
+from domains.users.router import router as router_users
 
 from common.task_queue import celery_app  # noqa
 
@@ -28,6 +29,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router_auth)
+app.include_router(router_users)
 
 if __name__ == '__main__':
     uvicorn.run('main:app')
