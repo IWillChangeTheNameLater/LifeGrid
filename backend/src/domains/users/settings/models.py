@@ -2,11 +2,11 @@ from enum import IntEnum, StrEnum, unique
 from typing import Annotated, TYPE_CHECKING
 
 from pydantic import AfterValidator
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, JSON, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
 
-from .user_profile import UserProfile
+from .user_profile import UserProfileDict
 
 if TYPE_CHECKING:
     from domains.users.models import Users
@@ -49,17 +49,20 @@ HEXStr = Annotated[str, AfterValidator(is_hex_color)]
 
 
 class UserSettingsScheme(SQLModel):
-    accent_color_hex: HEXStr|None = Field(min_length=6, max_length=6)
+    accent_color_hex: HEXStr|None = Field(
+        default=None, min_length=6, max_length=6
+    )
     theme: Theme|None = None
     week_start_day: Weekdays|None = None
 
-    profile: UserProfile|None = None
+    profile: UserProfileDict|None = Field(default=None, sa_type=JSON)
 
 
 _user_default_settings = UserSettingsScheme(
     accent_color_hex='42adff',
     theme=Theme.SYSTEM,
-    week_start_day=Weekdays.MONDAY
+    week_start_day=Weekdays.MONDAY,
+    profile=None
 )
 
 
