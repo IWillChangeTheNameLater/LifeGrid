@@ -6,13 +6,13 @@ from common.base_dao import BaseDAO
 from common.database import init_session
 from common.models import ULIDStr
 
-from .models import user_default_settings, UserSettingsScheme, UsersSettings
+from .models import _user_default_settings, UserSettingsScheme, UsersSettings
 
 
 def _extract_custom_settings(
     user_settings: UserSettingsScheme
 ) -> dict[str, Any]:
-    user_default_settings_dict = user_default_settings.model_dump()
+    user_default_settings_dict = _user_default_settings.model_dump()
     user_settings_dict = user_settings.model_dump(
         exclude_none=True, exclude_unset=True, exclude_defaults=True
     )
@@ -52,7 +52,7 @@ class UsersSettingsDAO(BaseDAO[UsersSettings]):
         async with init_session() as session:
             statement = select(cls.model).where(cls.model.user_id == user_id)
             user_settings = (await session.exec(statement)).first()
-            settings = user_settings or user_default_settings
+            settings = user_settings or _user_default_settings
 
             complete_settings = UserSettingsScheme(**settings.model_dump())
             for attr, val in settings.model_dump().items():
@@ -60,7 +60,7 @@ class UsersSettingsDAO(BaseDAO[UsersSettings]):
                     setattr(
                         complete_settings,
                         attr,
-                        getattr(user_default_settings, attr)
+                        getattr(_user_default_settings, attr)
                     )
 
             return complete_settings
@@ -73,4 +73,4 @@ class UsersSettingsDAO(BaseDAO[UsersSettings]):
             await session.delete(settings)
             await session.commit()
 
-        return user_default_settings
+        return _user_default_settings

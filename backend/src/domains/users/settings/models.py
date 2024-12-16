@@ -33,7 +33,8 @@ class UserSettingsScheme(SQLModel):
     week_start_day: Weekdays|None = None
 
 
-user_default_settings = UserSettingsScheme(
+
+_user_default_settings = UserSettingsScheme(
     accent_color_hex='42adff',
     theme=Theme.SYSTEM,
     week_start_day=Weekdays.MONDAY
