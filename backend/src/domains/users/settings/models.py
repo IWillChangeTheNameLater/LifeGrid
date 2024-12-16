@@ -1,6 +1,7 @@
 from enum import IntEnum, StrEnum, unique
-from typing import TYPE_CHECKING
+from typing import Annotated, TYPE_CHECKING
 
+from pydantic import AfterValidator
 from sqlmodel import Field, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
@@ -29,8 +30,26 @@ class Weekdays(IntEnum):
     SUNDAY = 7
 
 
+def is_hex_color(color_code: str) -> str:
+    color_code = color_code.lower()
+    if len(color_code) == 3:
+        color_code = ''.join(i + i for i in color_code)
+
+    if len(color_code) != 6:
+        raise ValueError(
+            f'The color code {color_code} must be 3 or 6 characters long'
+        )
+    if set(color_code) - set('0123456789abcdef'):
+        raise ValueError(f'The color code {color_code} must be a hex number')
+
+    return color_code
+
+
+HEXStr = Annotated[str, AfterValidator(is_hex_color)]
+
+
 class UserSettingsScheme(SQLModel):
-    accent_color_hex: str|None = Field(min_length=6, max_length=6)
+    accent_color_hex: HEXStr|None = Field(min_length=6, max_length=6)
     theme: Theme|None = None
     week_start_day: Weekdays|None = None
 
