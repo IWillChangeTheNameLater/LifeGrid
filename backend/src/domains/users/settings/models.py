@@ -5,6 +5,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from common.models import ULIDField, ULIDStr
 
+from .user_profile import UserProfile
+
 if TYPE_CHECKING:
     from domains.users.models import Users
 
@@ -32,6 +34,7 @@ class UserSettingsScheme(SQLModel):
     theme: Theme|None = None
     week_start_day: Weekdays|None = None
 
+    profile: UserProfile|None = None
 
 
 _user_default_settings = UserSettingsScheme(
